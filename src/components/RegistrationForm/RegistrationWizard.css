@@ -1,0 +1,74 @@
+.registration-wizard-container {
+  min-height: 96vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #f7fafd 0%, #ffe0ef 100%);
+}
+
+.MuiPaper-root {
+  border-radius: 20px;
+  box-shadow: 0 6px 32px 0 rgba(35, 0, 40, 0.10), 0 1.5px 5px 0 rgba(177, 0, 86, 0.08);
+  backdrop-filter: blur(2px);
+  margin: 0 auto;
+}
+
+.MuiStepper-root {
+  padding-bottom: 0.5em;
+  padding-top: 1em;
+}
+
+.MuiStepLabel-label {
+  font-weight: 600;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #7c2352 !important;
+}
+
+.MuiTypography-h6 {
+  margin-bottom: 14px;
+  color: #b10056;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.MuiButton-contained {
+  background: linear-gradient(90deg, #b10056 0%, #f83392 100%);
+  box-shadow: 0 2px 8px 0 rgba(177, 0, 86, 0.10);
+  border-radius: 10px;
+  font-size: 1.05em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: box-shadow 0.22s;
+}
+
+.MuiButton-contained:hover {
+  background: linear-gradient(90deg, #a10050 0%, #e02078 100%);
+  box-shadow: 0 4px 16px 0 rgba(248, 51, 146, 0.12);
+}
+
+.MuiTextField-root {
+  background: #fff;
+  border-radius: 7px;
+}
+
+.MuiOutlinedInput-root {
+  border-radius: 7px !important;
+}
+
+.MuiFormLabel-root {
+  font-weight: 500;
+  color: #7c2352 !important;
+}
+
+@media (max-width: 700px) {
+  .MuiPaper-root {
+    padding: 1.5em !important;
+    max-width: 100vw !important;
+  }
+  .MuiStepper-root {
+    flex-direction: column !important;
+    align-items: flex-start;
+  }
+}

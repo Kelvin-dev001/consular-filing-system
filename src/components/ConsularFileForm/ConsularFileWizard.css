@@ -1,0 +1,33 @@
+.consularfile-wizard-container {
+  min-height: 94vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(120deg, #f8fafc 0%, #e0f0ff 100%);
+}
+
+.MuiPaper-root {
+  border-radius: 18px;
+}
+
+.MuiStepLabel-label {
+  font-weight: 600;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.MuiTypography-h6 {
+  margin-bottom: 12px;
+  color: #17447b;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.MuiButton-contained {
+  background: linear-gradient(90deg, #17447b 0%, #3a7ca5 100%);
+}
+
+.MuiButton-contained:hover {
+  background: linear-gradient(90deg, #13325a 0%, #2e5c8a 100%);
+}
