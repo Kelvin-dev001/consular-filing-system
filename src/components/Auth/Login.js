@@ -30,7 +30,7 @@ export default function Login() {
     if (apiBase.endsWith("/api")) {
       apiBase = apiBase.slice(0, -4);
     }
-    window.location.href = `${apiBase}/auth/google`;
+    window.location.href = `${apiBase}/api/auth/google`;
   }
 
   return (
