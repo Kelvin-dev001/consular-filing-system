@@ -24,7 +24,13 @@ export default function Login() {
   }
 
   function handleGoogleLogin() {
-    window.location.href = "http://localhost:5000/api/auth/google";
+    // Use the API base URL, but remove the "/api" suffix if present
+    let apiBase = process.env.REACT_APP_API_URL || "http://localhost:5000";
+    // Ensure no trailing slash or double 'api/api'
+    if (apiBase.endsWith("/api")) {
+      apiBase = apiBase.slice(0, -4);
+    }
+    window.location.href = `${apiBase}/auth/google`;
   }
 
   return (
