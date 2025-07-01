@@ -1,0 +1,163 @@
+/* RegistrationForm.module.css */
+
+/* General printable area (A4 size, margins for printing) */
+@media print {
+  .printContainer {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    background: #f8b8d0; /* Light pink, matching paper */
+    box-sizing: border-box;
+    color: #000;
+    font-family: 'Times New Roman', Times, serif;
+  }
+
+  .formTitle {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+  }
+
+  .formSubtitle {
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 1em;
+    text-transform: uppercase;
+  }
+
+  .section {
+    margin-bottom: 1.2em;
+    border: 1px solid #000;
+    padding: 0.7em 0.8em;
+    background: none;
+  }
+
+  .sectionHeader {
+    font-weight: bold;
+    margin-bottom: 0.3em;
+    text-transform: uppercase;
+    font-size: 1em;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+    font-size: 0.97em;
+  }
+  .table th,
+  .table td {
+    border: 1px solid #000;
+    padding: 0.3em 0.4em;
+    text-align: left;
+  }
+
+  .dottedLine {
+    border-bottom: 1px dotted #000;
+    display: inline-block;
+    width: 160px;
+    margin-left: 4px;
+    margin-right: 4px;
+    height: 1em;
+    vertical-align: bottom;
+  }
+
+  .lineGroup {
+    margin-bottom: 0.6em;
+  }
+
+  .footerRow {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.8em;
+    font-size: 0.95em;
+  }
+
+  /* Hide UI buttons etc when printing */
+  .noPrint {
+    display: none !important;
+  }
+}
+
+/* Styles for on-screen preview (optional, mostly same as print) */
+.printContainer {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  background: #f8b8d0;
+  box-sizing: border-box;
+  color: #000;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+.formTitle {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3em;
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+}
+
+.formSubtitle {
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 1em;
+  text-transform: uppercase;
+}
+
+.section {
+  margin-bottom: 1.2em;
+  border: 1px solid #000;
+  padding: 0.7em 0.8em;
+  background: none;
+}
+
+.sectionHeader {
+  font-weight: bold;
+  margin-bottom: 0.3em;
+  text-transform: uppercase;
+  font-size: 1em;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+  font-size: 0.97em;
+}
+.table th,
+.table td {
+  border: 1px solid #000;
+  padding: 0.3em 0.4em;
+  text-align: left;
+}
+
+.dottedLine {
+  border-bottom: 1px dotted #000;
+  display: inline-block;
+  width: 160px;
+  margin-left: 4px;
+  margin-right: 4px;
+  height: 1em;
+  vertical-align: bottom;
+}
+
+.lineGroup {
+  margin-bottom: 0.6em;
+}
+
+.footerRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.8em;
+  font-size: 0.95em;
+}
+
+/* Hide UI elements marked with noPrint class */
+.noPrint {
+  display: none !important;
+}
