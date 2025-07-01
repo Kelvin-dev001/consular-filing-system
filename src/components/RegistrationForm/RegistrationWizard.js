@@ -22,13 +22,12 @@ import SendIcon from "@mui/icons-material/Send";
 import { useTranslation } from "react-i18next";
 import API from "../../utils/api";
 import "./RegistrationWizard.css";
+import ConfirmationPage from "./ConfirmationPage";
 
 const initialForm = {
-  // STEP 1 - Consular Registration
   fileNumber: "",
   issuedOn: "",
   validity: "",
-  // STEP 2 - Personal Info
   fullName: "",
   countryPlaceOfBirth: "",
   birthDate: "",
@@ -49,7 +48,6 @@ const initialForm = {
   documentsPresented: "",
   currentResidence: "",
   observations: "",
-  // STEP 3 - Spouse
   spouse: {
     fullName: "",
     nationality: "",
@@ -58,20 +56,13 @@ const initialForm = {
     workplace: "",
     cellPhone: "",
   },
-  // STEP 4 - Family in Mozambique
   familyMozambique: [{ name: "", relationship: "", residence: "" }],
-  // STEP 5 - Family under 15 in Kenya
   familyUnder15: [{ name: "", relationship: "", age: "" }],
-  // STEP 6 - Consular Card
   consularCardNumber: "",
   consularCardIssueDate: "",
-  // STEP 7 - ID/Passports
   passports: [{ number: "", issueDate: "", expiryDate: "", country: "" }],
-  // STEP 8 - Repatriations
   repatriations: [{ date: "", conditions: "", charges: "" }],
-  // STEP 9 - Civil and Notary Acts
   civilActs: "",
-  // STEP 10 - Observations and Attachments
   passportPhoto: null,
   formImages: [],
 };
@@ -95,6 +86,7 @@ export default function RegistrationWizard() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const { t } = useTranslation();
 
   // -------- Field Handlers --------
@@ -222,8 +214,7 @@ export default function RegistrationWizard() {
       };
       await API.post("/registration", dataToSend);
       setMessage("Registration submitted!");
-      setActiveStep(0);
-      setForm(initialForm);
+      setSubmitted(true);
     } catch (err) {
       setError(err.response?.data?.message || "Submission failed");
     } finally {
@@ -933,6 +924,10 @@ export default function RegistrationWizard() {
   }
 
   // -------- Render --------
+  if (submitted) {
+    return <ConfirmationPage form={form} />;
+  }
+
   return (
     <Box className="registration-wizard-container">
       <Paper elevation={4} sx={{ p: { xs: 2, sm: 4 }, maxWidth: 850, margin: "auto" }}>
