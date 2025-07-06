@@ -202,7 +202,7 @@ export default function RegistrationWizard() {
       if (form.passportPhoto) {
         const formData = new FormData();
         formData.append("file", form.passportPhoto);
-        const uploadRes = await API.post("/upload", formData, {
+        const uploadRes = await API.post("/upload/single", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         photoUrl = uploadRes.data.filePath || uploadRes.data.url;
@@ -212,7 +212,7 @@ export default function RegistrationWizard() {
         ...form,
         passportPhoto: photoUrl,
       };
-      await API.post("/registration", dataToSend);
+      await API.post("/registrations", dataToSend);
       setMessage("Registration submitted!");
       setSubmitted(true);
     } catch (err) {
