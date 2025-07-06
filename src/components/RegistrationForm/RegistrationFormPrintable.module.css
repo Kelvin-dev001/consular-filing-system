@@ -1,0 +1,62 @@
+.printableForm {
+  background: #f9b6d1;
+  padding: 32px;
+  font-family: Arial, serif;
+  color: #111;
+}
+
+.header {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-weight: bold;
+  margin: 22px 0 10px 0;
+  text-transform: uppercase;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+}
+
+.table th,
+.table td {
+  border: 1.5px solid #222;
+  padding: 8px;
+  min-height: 32px;
+  font-size: 1em;
+  text-align: left;
+}
+
+.table th {
+  background: #f3a2c2;
+  font-weight: bold;
+  text-align: center;
+}
+
+.dottedLine {
+  border-bottom: 1px dotted #222;
+  width: 100%;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+.footerRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  font-size: 1em;
+}
+
+@media print {
+  .printableForm {
+    background: none !important;
+  }
+}
