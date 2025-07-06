@@ -23,11 +23,10 @@ export default function ConfirmationPage({ form }) {
         content={() => printRef.current}
         documentTitle="Inscricao Consular"
       />
-      {/* Hidden printable component */}
-      <div style={{ display: "none" }}>
-        <RegistrationFormPrintable ref={printRef} form={form} />
-      </div>
-      {/* Optionally, show a summary or confirmation details here */}
+      {/* Printable Component */}
+      <Box ref={printRef} sx={{ my: 2 }}>
+        <RegistrationFormPrintable form={form} />
+      </Box>
     </Paper>
   );
 }
