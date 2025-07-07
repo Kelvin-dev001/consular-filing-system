@@ -13,8 +13,8 @@ function PrintFormPage({ form }) {
 
   return (
     <div>
-      <button onClick={handlePrint} style={{ marginBottom: 16 }}>
-        <FaPrint style={{ marginRight: 8 }} />
+      <button onClick={handlePrint} style={{ marginBottom: 16, fontSize: 20, padding: 10 }}>
+        <FaPrint style={{ marginRight: 10, fontSize: 24, color: "black", verticalAlign: "middle" }} />
         Print
       </button>
       <div>
