@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 import EditConsularFileDialog from "./EditConsularFileDialog";
 
@@ -32,7 +31,7 @@ export default function ConsularFileTable() {
   const fetchRecords = () => {
     setLoading(true);
     axios
-      .get("/api/consular-files", {
+      .get("http://localhost:5000/api/consular-files", {
         params: {
           page: page + 1,
           limit: pageSize,
@@ -55,9 +54,6 @@ export default function ConsularFileTable() {
   }, [page, pageSize, search]);
 
   // Handlers for actions
-  const handleView = (id) => {
-    alert("View: " + id);
-  };
   const handleEdit = (id) => {
     const file = records.find((r) => r._id === id);
     setEditCons(file);
@@ -65,7 +61,7 @@ export default function ConsularFileTable() {
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this file?")) {
       axios
-        .delete(`/api/consular-files/${id}`)
+        .delete(`http://localhost:5000/api/consular-files/${id}`)
         .then(() => {
           setRecords((prev) => prev.filter((r) => r._id !== id));
         });
@@ -109,15 +105,6 @@ export default function ConsularFileTable() {
       flex: 1,
       minWidth: 150,
       getActions: (params) => [
-        <GridActionsCellItem
-          icon={
-            <Tooltip title="View">
-              <VisibilityIcon />
-            </Tooltip>
-          }
-          label="View"
-          onClick={() => handleView(params.id)}
-        />,
         <GridActionsCellItem
           icon={
             <Tooltip title="Edit">

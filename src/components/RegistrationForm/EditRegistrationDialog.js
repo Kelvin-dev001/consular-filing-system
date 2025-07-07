@@ -19,13 +19,72 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function EditRegistrationDialog({ open, onClose, registration, onSave }) {
-  const [form, setForm] = useState(registration || {});
+  // Controlled form state with sensible defaults
+  const [form, setForm] = useState({
+    fullName: "",
+    fileNumber: "",
+    countryPlaceOfBirth: "",
+    birthDate: "",
+    maritalStatus: "",
+    profession: "",
+    education: "",
+    workplaceOrSchool: "",
+    phone: "",
+    cellPhone: "",
+    currentResidence: "",
+    residenceKenya: "",
+    residenceMozambique: "",
+    district: "",
+    fatherName: "",
+    motherName: "",
+    passportOrIdNumber: "",
+    passportIssuedAt: "",
+    passportValidUntil: "",
+    documentsPresented: "",
+    issuedOn: "",
+    observations: "",
+    passportPhoto: "",
+    spouse: {},
+    familyMozambique: [],
+    familyUnder15: [],
+    ...registration
+  });
   const [file, setFile] = useState(null);
   const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    setForm(registration || {});
+    if (registration) {
+      setForm({
+        fullName: "",
+        fileNumber: "",
+        countryPlaceOfBirth: "",
+        birthDate: "",
+        maritalStatus: "",
+        profession: "",
+        education: "",
+        workplaceOrSchool: "",
+        phone: "",
+        cellPhone: "",
+        currentResidence: "",
+        residenceKenya: "",
+        residenceMozambique: "",
+        district: "",
+        fatherName: "",
+        motherName: "",
+        passportOrIdNumber: "",
+        passportIssuedAt: "",
+        passportValidUntil: "",
+        documentsPresented: "",
+        issuedOn: "",
+        observations: "",
+        passportPhoto: "",
+        spouse: {},
+        familyMozambique: [],
+        familyUnder15: [],
+        ...registration
+      });
+    }
     setFile(null);
   }, [registration]);
 
@@ -61,18 +120,19 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
   // File/photo handling
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
+  // Submit handler
   const handleSubmit = async () => {
+    setUploading(true);
+    setSnack({ open: false, message: "", severity: "success" });
     try {
       let newPhotoUrl = form.passportPhoto;
       if (file) {
-        setUploading(true);
         const formData = new FormData();
         formData.append("file", file);
         const uploadRes = await API.post("/upload", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         newPhotoUrl = uploadRes.data.filePath || uploadRes.data.url;
-        setUploading(false);
       }
 
       await API.put(`/registration/${form._id}`, {
@@ -80,13 +140,16 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
         passportPhoto: newPhotoUrl,
       });
       setSnack({ open: true, message: "Registration updated successfully!", severity: "success" });
-      onSave();
-      onClose();
+      setUploading(false);
+      if (onSave) onSave();
+      if (onClose) onClose();
     } catch (err) {
       setUploading(false);
-      setSnack({ open: true, message: "Update failed", severity: "error" });
+      setSnack({ open: true, message: err?.response?.data?.message || "Update failed", severity: "error" });
     }
   };
+
+  const handleCloseSnack = () => setSnack({ ...snack, open: false });
 
   return (
     <>
@@ -96,8 +159,8 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
           <Grid container spacing={2}>
             {/* Left column */}
             <Grid item xs={12} sm={6}>
-              <TextField label="Full Name" name="fullName" fullWidth margin="normal" value={form.fullName || ""} onChange={handleChange} />
-              <TextField label="File Number" name="fileNumber" fullWidth margin="normal" value={form.fileNumber || ""} onChange={handleChange} />
+              <TextField label="Full Name" name="fullName" fullWidth margin="normal" required value={form.fullName || ""} onChange={handleChange} />
+              <TextField label="File Number" name="fileNumber" fullWidth margin="normal" required value={form.fileNumber || ""} onChange={handleChange} />
               <TextField label="Country/Place of Birth" name="countryPlaceOfBirth" fullWidth margin="normal" value={form.countryPlaceOfBirth || ""} onChange={handleChange} />
               <TextField label="Date of Birth" name="birthDate" type="date" fullWidth margin="normal" value={form.birthDate ? form.birthDate.substring(0,10) : ""} onChange={handleChange} InputLabelProps={{ shrink: true }} />
               <TextField label="Marital Status" name="maritalStatus" fullWidth margin="normal" value={form.maritalStatus || ""} onChange={handleChange} />
@@ -310,16 +373,19 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
             onClick={handleSubmit}
             disabled={uploading}
           >
-            {uploading ? "Uploading..." : "Save"}
+            {uploading ? "Saving..." : "Save"}
           </Button>
         </DialogActions>
       </Dialog>
       <Snackbar
         open={snack.open}
         autoHideDuration={3000}
-        onClose={() => setSnack({ ...snack, open: false })}
+        onClose={handleCloseSnack}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert severity={snack.severity}>{snack.message}</Alert>
+        <Alert onClose={handleCloseSnack} severity={snack.severity} variant="filled">
+          {snack.message}
+        </Alert>
       </Snackbar>
     </>
   );
