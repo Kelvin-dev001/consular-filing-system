@@ -43,7 +43,7 @@ export default function EditConsularFileDialog({ open, onClose, consularFile, on
         setUploading(false);
       }
 
-      await API.put(`/consularFile/${form._id}`, {
+      await API.put(`/consular-files/${form._id}`, {
         ...form,
         attachment: newAttachmentUrl,
       });

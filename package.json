@@ -24,10 +24,12 @@
     "react-to-print": "^3.1.1",
     "web-vitals": "2.1.4"
   },
+  
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+      "proxy": "http://localhost:5000",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

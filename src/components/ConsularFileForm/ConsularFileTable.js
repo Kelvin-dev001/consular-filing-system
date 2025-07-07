@@ -72,6 +72,7 @@ export default function ConsularFileTable() {
     }
   };
 
+  // Adjusted columns to match existing data fields
   const columns = [
     {
       field: "fileNumber",
@@ -80,8 +81,8 @@ export default function ConsularFileTable() {
       minWidth: 120,
     },
     {
-      field: "subject",
-      headerName: "Subject",
+      field: "name",
+      headerName: "Name",
       flex: 1,
       minWidth: 120,
     },
@@ -90,10 +91,14 @@ export default function ConsularFileTable() {
       headerName: "Opened On",
       flex: 1,
       minWidth: 120,
+      valueGetter: (params) =>
+        params.value
+          ? new Date(params.value).toLocaleDateString()
+          : "",
     },
     {
-      field: "description",
-      headerName: "Description",
+      field: "observations",
+      headerName: "Observations",
       flex: 2,
       minWidth: 180,
     },
@@ -142,7 +147,7 @@ export default function ConsularFileTable() {
       </Typography>
       <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
         <TextField
-          label="Search by File Number, Subject, Description"
+          label="Search by File Number, Name, Observations"
           size="small"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
