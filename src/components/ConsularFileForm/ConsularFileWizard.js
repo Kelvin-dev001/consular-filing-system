@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Stepper,
   Step,
@@ -16,6 +16,8 @@ import {
   DialogContent,
   DialogActions,
   CircularProgress,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -24,8 +26,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ConsularFileWizard.css";
 
-
-// --------- INITIAL STATE ---------
 const initialForm = {
   fileNumber: "",
   name: "",
@@ -43,13 +43,23 @@ export default function ConsularFileWizard() {
   const [form, setForm] = useState(initialForm);
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Always provide fallback text in case of missing translation!
+  // Clean state when wizard is reopened for a new record
+  useEffect(() => {
+    setForm(initialForm);
+    setActiveStep(0);
+    setError("");
+    setSnack({ open: false, message: "", severity: "success" });
+    setSubmitting(false);
+    setShowConfirm(false);
+    // eslint-disable-next-line
+  }, []);
+
   const steps = [
     t("consularFileStepInfo", "Consular File Information"),
     t("consularFileStepPassports", "Passports Granted"),
@@ -57,7 +67,7 @@ export default function ConsularFileWizard() {
     t("consularFileStepCivilActs", "Civil & Notary Acts")
   ];
 
-  // --------- FIELD HANDLERS ---------
+  // FIELD HANDLERS
   const handleChange = (e) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -107,7 +117,7 @@ export default function ConsularFileWizard() {
 
   const handleFileChange = (e) => setForm(f => ({ ...f, attachment: e.target.files[0] }));
 
-  // --------- STEP VALIDATION ---------
+  // STEP VALIDATION
   function validateStep(stepData, stepIdx) {
     switch (stepIdx) {
       case 0:
@@ -116,7 +126,6 @@ export default function ConsularFileWizard() {
         }
         break;
       case 1:
-        // Passports: at least one, number and country required
         if (
           !stepData.passportsGranted.length ||
           stepData.passportsGranted.some(
@@ -127,7 +136,6 @@ export default function ConsularFileWizard() {
         }
         break;
       case 2:
-        // Repatriations: allow empty, but if filled, date and conditions required
         if (
           stepData.repatriations.some(
             r =>
@@ -139,7 +147,6 @@ export default function ConsularFileWizard() {
         }
         break;
       case 3:
-        // Optionally add validation for these
         break;
       default:
         break;
@@ -147,7 +154,7 @@ export default function ConsularFileWizard() {
     return "";
   }
 
-  // --------- NAVIGATION ---------
+  // NAVIGATION
   const handleNext = () => {
     setError("");
     const err = validateStep(form, activeStep);
@@ -162,10 +169,10 @@ export default function ConsularFileWizard() {
     setActiveStep((prev) => prev - 1);
   };
 
-  // --------- SUBMISSION ---------
+  // SUBMISSION
   async function doSubmit() {
     setError("");
-    setMessage("");
+    setSnack({ open: false, message: "", severity: "success" });
     setSubmitting(true);
     try {
       let attachmentUrl = "";
@@ -189,12 +196,24 @@ export default function ConsularFileWizard() {
         applicantSignature: form.applicantSignature,
         attachment: attachmentUrl
       });
-      setMessage(t("consularFileForm", "Consular file") + " " + t("submit", "submitted").toLowerCase() + "!");
+      setSnack({
+        open: true,
+        message:
+          t("consularFileForm", "Consular file") +
+          " " +
+          t("submit", "submitted").toLowerCase() +
+          "!",
+        severity: "success"
+      });
       setForm(initialForm);
       setActiveStep(0);
       setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err) {
-      setError(err?.response?.data?.message || t("submissionFailed", "Submission failed"));
+      setSnack({
+        open: true,
+        message: err?.response?.data?.message || t("submissionFailed", "Submission failed"),
+        severity: "error"
+      });
     } finally {
       setSubmitting(false);
       setShowConfirm(false);
@@ -204,7 +223,6 @@ export default function ConsularFileWizard() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    // Final validation
     for (let s = 0; s < steps.length; s++) {
       const err = validateStep(form, s);
       if (err) {
@@ -216,7 +234,7 @@ export default function ConsularFileWizard() {
     setShowConfirm(true);
   };
 
-  // --------- STEP CONTENT ---------
+  // STEP CONTENT
   function getStepContent(step) {
     switch (step) {
       case 0:
@@ -259,7 +277,7 @@ export default function ConsularFileWizard() {
                   <TextField label={t("country", "Country")} name="country" fullWidth value={item.country} onChange={e => handlePassportsChange(idx, e)} required />
                 </Grid>
                 <Grid item xs={1} alignSelf="center">
-                  <IconButton color="error" onClick={() => removePassport(idx)} disabled={form.passportsGranted.length === 1}>
+                  <IconButton color="error" onClick={() => removePassport(idx)} disabled={form.passportsGranted.length === 1 || submitting}>
                     <RemoveCircleIcon />
                   </IconButton>
                 </Grid>
@@ -288,7 +306,7 @@ export default function ConsularFileWizard() {
                   <TextField label={t("stateCharges", "State Charges")} name="stateCharges" fullWidth value={item.stateCharges} onChange={e => handleRepatriationsChange(idx, e)} />
                 </Grid>
                 <Grid item xs={1} alignSelf="center">
-                  <IconButton color="error" onClick={() => removeRepatriation(idx)} disabled={form.repatriations.length === 1}>
+                  <IconButton color="error" onClick={() => removeRepatriation(idx)} disabled={form.repatriations.length === 1 || submitting}>
                     <RemoveCircleIcon />
                   </IconButton>
                 </Grid>
@@ -326,7 +344,6 @@ export default function ConsularFileWizard() {
     }
   }
 
-  // --------- RENDER ---------
   return (
     <Box className="consularfile-wizard-container">
       <Paper elevation={4} sx={{ p: 4, maxWidth: 850, margin: "auto" }}>
@@ -343,7 +360,6 @@ export default function ConsularFileWizard() {
             {getStepContent(activeStep)}
           </Box>
           {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
-          {message && <Typography color="primary" sx={{ mt: 2 }}>{message}</Typography>}
           <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
             <Button disabled={activeStep === 0 || submitting} onClick={handleBack}>{t("back", "Back")}</Button>
             {activeStep < steps.length - 1 ? (
@@ -382,6 +398,18 @@ export default function ConsularFileWizard() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Snackbar for success/error */}
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={3000}
+        onClose={() => setSnack({ ...snack, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert onClose={() => setSnack({ ...snack, open: false })} severity={snack.severity} variant="filled">
+          {snack.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Stepper,
   Step,
@@ -91,6 +91,16 @@ export default function RegistrationWizard() {
   const [submitted, setSubmitted] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    setForm(initialForm);
+    setActiveStep(0);
+    setError("");
+    setMessage("");
+    setLoading(false);
+    setSubmitted(false);
+    setSnackbarOpen(false);
+  }, []);
 
   // -------- Field Handlers --------
   const handleChange = (e) =>
@@ -240,7 +250,6 @@ export default function RegistrationWizard() {
   };
 
   // -------- Step Content --------
-  // Full getStepContent function as you provided
   function getStepContent(step) {
     switch (step) {
       case 0:

@@ -125,7 +125,7 @@ export default function Dashboard() {
 
   // Registration delete handler
   const handleDeleteReg = async (id) => {
-    if (!window.confirm(t("deleteRegistrationConfirm") || "Delete this registration?")) return;
+    if (!window.confirm(t("deleteRegistrationConfirm") || t("deleteConfirm", { type: t("registration") }))) return;
     await API.delete(`/registration/${id}`);
     fetchRegistrations();
   };
@@ -214,7 +214,7 @@ export default function Dashboard() {
                 onClick={() => navigate("/registrations")}
                 sx={{ textTransform: "none", fontWeight: 600 }}
               >
-                {t("viewTable") || "View Table"}
+                {t("Registrations")}
               </Button>
               <Button
                 variant="outlined"
@@ -225,7 +225,7 @@ export default function Dashboard() {
                   fontWeight: 600,
                 }}
               >
-                Consular Files
+                {t("consularFiles")}
               </Button>
               <Button
                 variant="outlined"
@@ -409,22 +409,22 @@ export default function Dashboard() {
                     )}
                   </Box>
                   <Stack direction="row" spacing={1}>
-                    <Tooltip title={t("edit") || "Edit"}>
+                    <Tooltip title={t("edit")}>
                       <IconButton
                         size="small"
                         color="primary"
                         onClick={() => setEditReg(reg)}
-                        aria-label="edit registration"
+                        aria-label={t("editRegistration")}
                       >
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title={t("delete") || "Delete"}>
+                    <Tooltip title={t("delete")}>
                       <IconButton
                         size="small"
                         color="error"
                         onClick={() => handleDeleteReg(reg._id)}
-                        aria-label="delete registration"
+                        aria-label={t("deleteRegistration")}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -445,7 +445,7 @@ export default function Dashboard() {
             <IconButton
               disabled={regPage === 1}
               onClick={() => setRegPage(regPage - 1)}
-              aria-label="previous page"
+              aria-label={t("previousPage")}
             >
               <TableChartIcon />
             </IconButton>
@@ -455,7 +455,7 @@ export default function Dashboard() {
             <IconButton
               disabled={regPage === regTotalPages}
               onClick={() => setRegPage(regPage + 1)}
-              aria-label="next page"
+              aria-label={t("nextPage")}
             >
               <TableChartIcon />
             </IconButton>
@@ -488,7 +488,7 @@ export default function Dashboard() {
             fontWeight={700}
             letterSpacing={0.5}
           >
-            {t("consularFileRecords") || "Consular File Records"}
+            {t("consularFileRecords")}
           </Typography>
           {/* Search/filter for consular files */}
           <Stack
@@ -498,7 +498,7 @@ export default function Dashboard() {
           >
             <TextField
               size="small"
-              placeholder={t("searchBySubjectDescription") || "Search by subject/description"}
+              placeholder={t("searchBySubjectDescription")}
               value={consSearch}
               onChange={(e) => {
                 setConsSearch(e.target.value);
@@ -556,7 +556,7 @@ export default function Dashboard() {
             </Box>
           ) : consularFiles.length === 0 ? (
             <Typography color="text.secondary" textAlign="center">
-              No consular files found.
+              {t("noConsularFiles")}
             </Typography>
           ) : (
             <Box component="ul" sx={{ pl: 2, m: 0 }}>
@@ -597,7 +597,7 @@ export default function Dashboard() {
                           fontSize="0.97em"
                           sx={{ ml: 2 }}
                         >
-                          {t("openedOn") || "Opened On"}: {file.openedOn}
+                          {t("openedOn")}: {file.openedOn}
                         </Typography>
                       )}
                     </Stack>
@@ -617,7 +617,7 @@ export default function Dashboard() {
                           textDecoration: "underline",
                         }}
                       >
-                        {t("viewAttachment") || "View Attachment"}
+                        {t("viewAttachment")}
                       </a>
                     )}
                   </Box>
@@ -636,7 +636,7 @@ export default function Dashboard() {
             <IconButton
               disabled={consPage === 1}
               onClick={() => setConsPage(consPage - 1)}
-              aria-label="previous page"
+              aria-label={t("previousPage")}
             >
               <TableChartIcon />
             </IconButton>
@@ -646,7 +646,7 @@ export default function Dashboard() {
             <IconButton
               disabled={consPage === consTotalPages}
               onClick={() => setConsPage(consPage + 1)}
-              aria-label="next page"
+              aria-label={t("nextPage")}
             >
               <TableChartIcon />
             </IconButton>
