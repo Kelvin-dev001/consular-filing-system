@@ -15,6 +15,7 @@ import {
   DialogContent,
   IconButton,
   Avatar,
+  Divider
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -91,7 +92,7 @@ export default function RegistrationsTable() {
 
   // Download handler: opens new print window with registration info
   const handleDownload = (row) => {
-    const getFamilyTable = (familyArr, title) => {
+    const getFamilyTable = (familyArr, title, showAgeType) => {
       if (!familyArr || !familyArr.length) return "";
       return `
         <h4>${title}</h4>
@@ -108,7 +109,7 @@ export default function RegistrationsTable() {
                 `<tr>
                   <td>${fm.name || ""}</td>
                   <td>${fm.relationship || ""}</td>
-                  <td>${fm.age || ""}</td>
+                  <td>${fm.age ? `${fm.age} ${showAgeType && fm.ageType === "months" ? "months" : "years"}` : ""}</td>
                   <td>${fm.residence || ""}</td>
                 </tr>`
             )
@@ -133,8 +134,8 @@ export default function RegistrationsTable() {
       `
       : "";
 
-    const familyMoz = getFamilyTable(row.familyMozambique, "Family in Mozambique");
-    const familyU15 = getFamilyTable(row.familyUnder15, "Family Under 15");
+    const familyMoz = getFamilyTable(row.familyMozambique, "Family in Mozambique", false);
+    const familyU15 = getFamilyTable(row.familyUnder15, "Family Under 15", true);
 
     const printContent = `
       <html>
@@ -499,7 +500,11 @@ export default function RegistrationsTable() {
                       <tr key={idx}>
                         <td style={{ border: "1px solid #222", padding: "8px" }}>{fm.name}</td>
                         <td style={{ border: "1px solid #222", padding: "8px" }}>{fm.relationship}</td>
-                        <td style={{ border: "1px solid #222", padding: "8px" }}>{fm.age}</td>
+                        <td style={{ border: "1px solid #222", padding: "8px" }}>
+                          {fm.ageType === "months" && fm.age ? `${fm.age} months` :
+                           fm.ageType === "years" && fm.age ? `${fm.age} years` :
+                           fm.age || ""}
+                        </td>
                         <td style={{ border: "1px solid #222", padding: "8px" }}>{fm.residence}</td>
                       </tr>
                     ))}

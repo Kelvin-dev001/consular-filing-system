@@ -15,6 +15,10 @@ import {
   CircularProgress,
   Alert,
   Snackbar,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -40,13 +44,15 @@ const initialForm = {
   profession: "",
   workplaceOrSchool: "",
   phone: "",
+  cellPhone: "",
+  passportOrIdType: "Passport",
   passportOrIdNumber: "",
   passportIssuedAt: "",
   passportValidUntil: "",
   residenceKenya: "",
+  location: "",
   residenceMozambique: "",
   district: "",
-  cellPhone: "",
   documentsPresented: "",
   currentResidence: "",
   observations: "",
@@ -59,7 +65,8 @@ const initialForm = {
     cellPhone: "",
   },
   familyMozambique: [{ name: "", relationship: "", residence: "" }],
-  familyUnder15: [{ name: "", relationship: "", age: "" }],
+  // Updated structure for familyUnder15 to support age type
+  familyUnder15: [{ name: "", relationship: "", age: "", ageType: "years" }],
   consularCardNumber: "",
   consularCardIssueDate: "",
   passports: [{ number: "", issueDate: "", expiryDate: "", country: "" }],
@@ -135,8 +142,9 @@ export default function RegistrationWizard() {
 
   // Array: Family Under 15
   const handleFamilyUnder15Change = (idx, e) => {
+    const { name, value } = e.target;
     const updated = form.familyUnder15.map((f, i) =>
-      i === idx ? { ...f, [e.target.name]: e.target.value } : f
+      i === idx ? { ...f, [name]: value } : f
     );
     setForm({ ...form, familyUnder15: updated });
   };
@@ -145,7 +153,7 @@ export default function RegistrationWizard() {
       ...form,
       familyUnder15: [
         ...form.familyUnder15,
-        { name: "", relationship: "", age: "" },
+        { name: "", relationship: "", age: "", ageType: "years" },
       ],
     });
   const removeFamilyUnder15 = (idx) =>
@@ -305,6 +313,7 @@ export default function RegistrationWizard() {
                 Enter your personal details as required.
               </Typography>
             </Grid>
+            {/* All personal info fields as before */}
             <Grid item xs={6}>
               <TextField
                 label={t("fullName") || "Full Name"}
@@ -406,9 +415,25 @@ export default function RegistrationWizard() {
                 onChange={handleChange}
               />
             </Grid>
+            {/* Passport/ID Type Selector */}
             <Grid item xs={6}>
               <TextField
-                label={t("passportOrIdNumber") || "Passport/ID Number"}
+                select
+                label={t("passportOrIdType") || "Document Type"}
+                name="passportOrIdType"
+                value={form.passportOrIdType}
+                onChange={handleChange}
+                fullWidth
+              >
+                <MenuItem value="Passport">Passaporte</MenuItem>
+                <MenuItem value="C. Emergencia">C. Emergencia</MenuItem>
+                <MenuItem value="BI">BI</MenuItem>
+                <MenuItem value="Cédula Pessoal">Cédula Pessoal</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label={t("passportOrIdNumber") || "Document Number"}
                 name="passportOrIdNumber"
                 fullWidth
                 value={form.passportOrIdNumber}
@@ -441,6 +466,16 @@ export default function RegistrationWizard() {
                 name="residenceKenya"
                 fullWidth
                 value={form.residenceKenya}
+                onChange={handleChange}
+              />
+            </Grid>
+            {/* New field: Location in Kenya */}
+            <Grid item xs={6}>
+              <TextField
+                label={t("location") || "Location in Kenya"}
+                name="location"
+                fullWidth
+                value={form.location}
                 onChange={handleChange}
               />
             </Grid>
@@ -646,7 +681,7 @@ export default function RegistrationWizard() {
                     onChange={(e) => handleFamilyUnder15Change(idx, e)}
                   />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={2}>
                   <TextField
                     label={t("familyUnder15Age") || "Age"}
                     name="age"
@@ -655,6 +690,20 @@ export default function RegistrationWizard() {
                     value={item.age}
                     onChange={(e) => handleFamilyUnder15Change(idx, e)}
                   />
+                </Grid>
+                <Grid item xs={2}>
+                  <FormControl fullWidth>
+                    <InputLabel>{t("ageType") || "Age Type"}</InputLabel>
+                    <Select
+                      name="ageType"
+                      value={item.ageType || "years"}
+                      label={t("ageType") || "Age Type"}
+                      onChange={(e) => handleFamilyUnder15Change(idx, e)}
+                    >
+                      <MenuItem value="years">{t("years") || "Years"}</MenuItem>
+                      <MenuItem value="months">{t("months") || "Months"}</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={1} alignSelf="center">
                   <Tooltip title="Remove">

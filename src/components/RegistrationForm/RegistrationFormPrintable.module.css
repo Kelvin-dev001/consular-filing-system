@@ -3,6 +3,9 @@
   padding: 32px;
   font-family: Arial, serif;
   color: #111;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .header {
@@ -11,13 +14,65 @@
   font-size: 1.2em;
   margin-bottom: 10px;
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .sectionTitle {
   text-align: center;
   font-weight: bold;
-  margin: 22px 0 10px 0;
+  margin: 28px 0 12px 0;
   text-transform: uppercase;
+  font-size: 1.12em;
+  letter-spacing: 0.5px;
+}
+
+.infoRow {
+  margin-bottom: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.docType {
+  font-weight: bold;
+  color: #b10056;
+}
+
+.locationField {
+  font-style: italic;
+  color: #444;
+}
+
+.detailsBlock {
+  border: 2px solid #222;
+  padding: 8px;
+  margin-bottom: 20px;
+  background: #fff;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.photoBox {
+  width: 110px;
+  height: 110px;
+  border: 2px solid #222;
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+}
+
+.photoPreview {
+  width: 98px;
+  height: 98px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .table {
@@ -33,6 +88,7 @@
   min-height: 32px;
   font-size: 1em;
   text-align: left;
+  background: #fff;
 }
 
 .table th {
@@ -55,8 +111,59 @@
   font-size: 1em;
 }
 
+img {
+  display: block;
+  margin: 0 auto 10px auto;
+  max-width: 110px;
+  max-height: 110px;
+  outline: none;
+}
+
 @media print {
   .printableForm {
     background: none !important;
+    box-shadow: none !important;
+    padding: 6px !important;
+    margin: 0 !important;
+    color: #111 !important;
+    max-width: 100% !important;
+  }
+  .header, .sectionTitle, .footerRow {
+    color: #111 !important;
+    background: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .table th, .table td {
+    background: none !important;
+    color: #111 !important;
+    border: 1px solid #222 !important;
+    border-width: 1px !important;
+    padding: 6px !important;
+    font-size: 0.95em !important;
+  }
+  .table th {
+    font-weight: bold !important;
+    text-align: center !important;
+  }
+  .photoBox {
+    border: 1px solid #222 !important;
+    background: none !important;
+    width: 95px !important;
+    height: 95px !important;
+  }
+  .photoPreview {
+    max-width: 88px !important;
+    max-height: 88px !important;
+  }
+  img {
+    max-width: 90px !important;
+    max-height: 90px !important;
+    margin-bottom: 8px !important;
+    outline: none !important;
+  }
+  /* Hide buttons/controls in print (if any) */
+  button, .no-print {
+    display: none !important;
   }
 }

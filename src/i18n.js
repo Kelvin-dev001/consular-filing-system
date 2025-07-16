@@ -51,13 +51,15 @@ const resources = {
       education: "Education",
       workplaceOrSchool: "Workplace / School",
       phone: "Phone",
-      passportOrIdNumber: "Passport/ID Number",
+      cellPhone: "Cell Phone",
+      passportOrIdType: "Document Type",
+      passportOrIdNumber: "Document Number",
       passportIssuedAt: "Issued At",
       passportValidUntil: "Valid Until",
       residenceKenya: "Residence in Kenya",
+      location: "Location in Kenya",
       residenceMozambique: "Residence in Mozambique",
       district: "District",
-      cellPhone: "Cell Phone",
       documentsPresented: "Documents Presented",
       issuedOn: "Issued On",
       entryDateKenya: "Date of Entry to Kenya",
@@ -78,6 +80,10 @@ const resources = {
       familyUnder15Name: "Name (Family Under 15)",
       familyUnder15Relationship: "Relationship (Family Under 15)",
       familyUnder15Age: "Age (Family Under 15)",
+      familyUnder15AgeType: "Age Type",        // <-- Added for age type selector
+      ageType: "Age Type",                     // <-- Added for generic usage
+      years: "Years",                          // <-- Added for age in years
+      months: "Months",                        // <-- Added for age in months
       passportPhoto: "Passport Photo",
       formImages: "Additional Images",
       submit: "Submit",
@@ -164,13 +170,15 @@ const resources = {
       education: "Habilitações Literárias",
       workplaceOrSchool: "Local de trabalho / (Estudante, local de ensino)",
       phone: "Telefone",
-      passportOrIdNumber: "Passaporte/C.Emergencial/BI/Cédula pessoal Nº",
+      cellPhone: "Telefone Celular",
+      passportOrIdType: "Tipo de Documento",
+      passportOrIdNumber: "Número do Documento",
       passportIssuedAt: "Emitido em",
       passportValidUntil: "Válido até",
       residenceKenya: "Endereço da residência em Quênia",
+      location: "Localização em Quênia",
       residenceMozambique: "Última residência em Moçambique",
       district: "Distrito",
-      cellPhone: "Telefone Celular",
       documentsPresented: "Documentos apresentados no acto de registo",
       issuedOn: "Emitido em",
       entryDateKenya: "Data de entrada no Quênia",
@@ -191,6 +199,10 @@ const resources = {
       familyUnder15Name: "Nomes",
       familyUnder15Relationship: "Grau de parentesco",
       familyUnder15Age: "Idade",
+      familyUnder15AgeType: "Tipo de idade",       // <-- Added for age type selector
+      ageType: "Tipo de idade",                    // <-- Added for generic usage
+      years: "Anos",                               // <-- Added for age in years
+      months: "Meses",                             // <-- Added for age in months
       passportPhoto: "Foto do Passaporte",
       formImages: "Imagens Adicionais",
       submit: "Enviar",

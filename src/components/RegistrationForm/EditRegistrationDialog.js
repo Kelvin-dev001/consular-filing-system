@@ -12,7 +12,11 @@ import {
   Grid,
   IconButton,
   Box,
-  Divider
+  Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@mui/material";
 import API from "../../utils/api";
 import AddIcon from "@mui/icons-material/Add";
@@ -320,7 +324,7 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
           {(form.familyUnder15 || []).map((member, idx) => (
             <Box key={idx} sx={{ mb: 2, p: 1, border: "1px solid #eee", borderRadius: 1, position: "relative" }}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     label="Name"
                     name="name"
@@ -330,7 +334,7 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
                     onChange={e => handleFamilyChange("familyUnder15", idx, e)}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     label="Relationship"
                     name="relationship"
@@ -340,7 +344,7 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
                     onChange={e => handleFamilyChange("familyUnder15", idx, e)}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     label="Age"
                     name="age"
@@ -351,6 +355,20 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
                     onChange={e => handleFamilyChange("familyUnder15", idx, e)}
                   />
                 </Grid>
+                <Grid item xs={12} sm={3}>
+                  <FormControl fullWidth margin="dense">
+                    <InputLabel>Age Type</InputLabel>
+                    <Select
+                      name="ageType"
+                      value={member.ageType || "years"}
+                      label="Age Type"
+                      onChange={e => handleFamilyChange("familyUnder15", idx, e)}
+                    >
+                      <MenuItem value="years">Years</MenuItem>
+                      <MenuItem value="months">Months</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
               </Grid>
               <IconButton size="small" sx={{ position: "absolute", top: 4, right: 4 }} color="error"
                 onClick={() => removeFamilyMember("familyUnder15", idx)}>
@@ -360,7 +378,7 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
           ))}
           <Button
             startIcon={<AddIcon />}
-            onClick={() => addFamilyMember("familyUnder15", { name: "", relationship: "", age: "" })}
+            onClick={() => addFamilyMember("familyUnder15", { name: "", relationship: "", age: "", ageType: "years" })}
             sx={{ mb: 2 }}
           >
             Add Family Member (Under 15)

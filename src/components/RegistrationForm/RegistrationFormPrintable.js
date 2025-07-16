@@ -1,8 +1,35 @@
 import React from "react";
 import styles from './RegistrationFormPrintable.module.css';
 
+const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // <--- update as needed
+
 const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
   <div ref={ref} className={styles.printableForm}>
+    {/* --- Emblem, Title, and Photo --- */}
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+      {/* Emblem */}
+      <img
+        src={EMBLEM_SRC}
+        alt="Emblema da República de Moçambique"
+        style={{
+          width: 100,
+          height: 100,
+          objectFit: "contain",
+          marginLeft: "auto",
+          marginRight: "auto"
+        }}
+      />
+      {/* Photo box or user photo */}
+      <div style={{ width: 110, height: 110, border: "2px solid #222", marginLeft: 16, display: "flex", alignItems: "center", justifyContent: "center", background: '#fff' }}>
+        {form?.passportPhoto ? (
+          <img
+            src={typeof form.passportPhoto === "string" ? form.passportPhoto : URL.createObjectURL(form.passportPhoto)}
+            alt="Foto do Passaporte"
+            style={{ width: "98px", height: "98px", objectFit: "cover", borderRadius: 4 }}
+          />
+        ) : null}
+      </div>
+    </div>
     {/* --- Form Header --- */}
     <div className={styles.header}>
       REPÚBLICA DE MOÇAMBIQUE<br />
@@ -12,180 +39,222 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
       INSCRIÇÃO CONSULAR
     </div>
     <div style={{ marginTop: 20 }}>
-      <b>INSC. CONSULAR Nº:</b> {form?.fileNumber || ""}
+      <b>INSC. CONSULAR Nº:</b> {form?.fileNumber || "_________________________"}
       <br />
-      <b>DATA DE EMISSÃO:</b> {form?.issuedOn || ""}
+      <b>DATA DE EMISSÃO:</b> {form?.issuedOn || "____/____/______"}
       <br />
-      <b>VALIDADE:</b> {form?.validity || ""}
+      <b>VALIDADE:</b> {form?.validity || "_____/_____/_____"}
     </div>
     <hr style={{ margin: "20px 0" }} />
 
-    {/* --- Personal Info --- */}
-    <div>
-      <div className={styles.sectionTitle}>Dados Pessoais</div>
-      <div>Nome completo: {form?.fullName || ""}</div>
-      <div>País e local de nascimento: {form?.countryPlaceOfBirth || ""}</div>
-      <div>Data de nascimento: {form?.birthDate || ""}</div>
-      <div>Estado civil: {form?.maritalStatus || ""}</div>
-      <div>Nome do pai: {form?.fatherName || ""}</div>
-      <div>Nome da mãe: {form?.motherName || ""}</div>
-      <div>Habilitações literárias: {form?.education || ""}</div>
-      <div>Profissão: {form?.profession || ""}</div>
-      <div>Local de trabalho/escola: {form?.workplaceOrSchool || ""}</div>
-      <div>Telefone: {form?.phone || ""}</div>
-      <div>Telemóvel: {form?.cellPhone || ""}</div>
-      <div>Passaporte/BI Nº: {form?.passportOrIdNumber || ""}</div>
-      <div>Emitido em: {form?.passportIssuedAt || ""}</div>
-      <div>Válido até: {form?.passportValidUntil || ""}</div>
-      <div>Residência em Quénia: {form?.residenceKenya || ""}</div>
-      <div>Residência em Moçambique: {form?.residenceMozambique || ""}</div>
-      <div>Distrito: {form?.district || ""}</div>
-      <div>Documentos apresentados: {form?.documentsPresented || ""}</div>
-      <div>Residência actual: {form?.currentResidence || ""}</div>
+    {/* --- All Details Stuck Together (No Section Headers) --- */}
+    <div style={{ border: "2px solid #222", padding: "8px", marginBottom: 20 }}>
+      <div>Nome completo: {form?.fullName || "______________________________________________"}</div>
+      <div>País e local de nascimento: {form?.countryPlaceOfBirth || "______________________________________________"}</div>
+      <div>
+        Data de Nascimento: {form?.birthDate || "__________"} &nbsp;
+        Estado Civil: {form?.maritalStatus || "____________________"}
+      </div>
+      <div>Nome do Pai: {form?.fatherName || "___________________________"} &nbsp; Nome da mãe: {form?.motherName || "___________________________"}</div>
+      <div>
+        Habilitações Literárias: {form?.education || "________________"} &nbsp;
+        profissão: {form?.profession || "________________"} &nbsp;
+        Local de trabalho: {form?.workplaceOrSchool || "_____________________________"}
+      </div>
+      <div>
+        Telefone: {form?.phone || "_________________"} &nbsp;
+        (Estudante, local de ensino): {form?.workplaceOrSchool || "_________________________"}
+      </div>
+      <div>
+        Portador de passaporte/C.Emergencial/BI/Cédula pessoal Nº: {form?.passportOrIdNumber || "_____________________"} &nbsp;
+        Tipo: {form?.passportOrIdType || "_____________________"} &nbsp;
+        Emitido em: {form?.passportIssuedAt || "_________________"}
+      </div>
+      <div>
+        Aos: {form?.issuedOn || "__________"} &nbsp;
+        válido até: {form?.passportValidUntil || "__________"} &nbsp;
+        Última residência em Moçambique: {form?.residenceMozambique || "________________________"}
+      </div>
+      <div>
+        Endereço da residência em Quénia: {form?.residenceKenya || "________________________"} &nbsp;
+        Localidade: {form?.location || "________________________"}
+      </div>
+      <div>
+        Distrito: {form?.district || "_________________"} &nbsp;
+        Telefone Celular: {form?.cellPhone || "_________________"}
+      </div>
+      <div>
+        Documentos apresentados: {form?.documentsPresented || "__________________________________________"}
+      </div>
+      <div>
+        Residência actual: {form?.currentResidence || "__________________________________________"}
+      </div>
     </div>
-    <hr style={{ margin: "20px 0" }} />
 
     {/* --- Spouse Info --- */}
-    <div>
-      <div className={styles.sectionTitle}>Dados de Cônjuge</div>
-      <div>Nome completo: {form?.spouse?.fullName || ""}</div>
-      <div>Nacionalidade: {form?.spouse?.nationality || ""}</div>
-      <div>Documento de identificação: {form?.spouse?.idDocument || ""}</div>
-      <div>Profissão: {form?.spouse?.profession || ""}</div>
-      <div>Local de trabalho: {form?.spouse?.workplace || ""}</div>
-      <div>Celular: {form?.spouse?.cellPhone || ""}</div>
+    <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>DADOS DE CÔNJUGE</div>
+    <div style={{ border: "2px solid #222", padding: "8px", marginBottom: 20 }}>
+      <div>
+        Nome completo: {form?.spouse?.fullName || "_________________________________"} &nbsp;
+        Nacionalidade: {form?.spouse?.nationality || "__________________"} &nbsp;
+        Documento de identificação: {form?.spouse?.idDocument || "__________________"}
+      </div>
+      <div>
+        Profissão: {form?.spouse?.profession || "___________________"} &nbsp;
+        Local de trabalho: {form?.spouse?.workplace || "___________________"} &nbsp;
+        Celular Nº: {form?.spouse?.cellPhone || "___________________"}
+      </div>
     </div>
-    <hr style={{ margin: "20px 0" }} />
 
     {/* --- Family Mozambique --- */}
-    <div>
-      <div className={styles.sectionTitle}>Familiares em Moçambique</div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Grau de parentesco</th>
-            <th>Residência / contacto</th>
+    <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>FAMILIARES EM MOÇAMBIQUE</div>
+    <table className={styles.table} style={{ border: "2px solid #222" }}>
+      <thead>
+        <tr>
+          <th>Nomes</th>
+          <th>Grau de parentesco</th>
+          <th>Residência / contacto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {(form?.familyMozambique || []).map((f, i) => (
+          <tr key={i}>
+            <td>{f.name || ""}</td>
+            <td>{f.relationship || ""}</td>
+            <td>{f.residence || ""}</td>
           </tr>
-        </thead>
-        <tbody>
-          {(form?.familyMozambique || []).map((f, i) => (
-            <tr key={i}>
-              <td>{f.name}</td>
-              <td>{f.relationship}</td>
-              <td>{f.residence}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <hr style={{ margin: "20px 0" }} />
+        ))}
+      </tbody>
+    </table>
 
     {/* --- Family Under 15 --- */}
-    <div>
-      <div className={styles.sectionTitle}>
-        Pessoal da família a seu cargo (menores de 15 anos)
-      </div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Grau de parentesco</th>
-            <th>Idade</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(form?.familyUnder15 || []).map((f, i) => (
-            <tr key={i}>
-              <td>{f.name}</td>
-              <td>{f.relationship}</td>
-              <td>{f.age}</td>
+    {form?.familyUnder15 && form.familyUnder15.length > 0 && (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Pessoal da família a seu cargo (menores de 15 anos)
+        </div>
+        <table className={styles.table} style={{ border: "2px solid #222" }}>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Grau de parentesco</th>
+              <th>Idade</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <hr style={{ margin: "20px 0" }} />
+          </thead>
+          <tbody>
+            {(form?.familyUnder15 || []).map((f, i) => (
+              <tr key={i}>
+                <td>{f.name || ""}</td>
+                <td>{f.relationship || ""}</td>
+                <td>
+                  {(f.ageType === "months" && f.age !== "") 
+                    ? `${f.age} meses`
+                    : (f.ageType === "years" && f.age !== "")
+                      ? `${f.age} anos`
+                      : (f.age || "")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )}
 
     {/* --- Consular Card --- */}
-    <div>
-      <div className={styles.sectionTitle}>Cartão de inscrição consular concedidos</div>
-      <table className={styles.table}>
-        <tbody>
-          <tr>
-            <td>Número de cartão: {form?.consularCardNumber || ""}</td>
-            <td>Data de emissão: {form?.consularCardIssueDate || ""}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <hr style={{ margin: "20px 0" }} />
+    {form?.consularCardNumber || form?.consularCardIssueDate ? (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Cartão de inscrição consular concedidos
+        </div>
+        <table className={styles.table} style={{ border: "2px solid #222" }}>
+          <tbody>
+            <tr>
+              <td>Número de cartão: {form?.consularCardNumber || ""}</td>
+              <td>Data de emissão: {form?.consularCardIssueDate || ""}</td>
+            </tr>
+          </tbody>
+        </table>
+      </>
+    ) : null}
 
     {/* --- Passports Concedidos --- */}
-    <div>
-      <div className={styles.sectionTitle}>Bilhete de Identidade/ Passaportes Concedidos</div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Número</th>
-            <th>Data</th>
-            <th>Prazo de Validade</th>
-            <th>Países</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(form?.passports || []).map((p, i) => (
-            <tr key={i}>
-              <td>{p.number}</td>
-              <td>{p.issueDate}</td>
-              <td>{p.expiryDate}</td>
-              <td>{p.country}</td>
+    {form?.passports && form.passports.length > 0 && (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Bilhete de Identidade/ Passaportes Concedidos
+        </div>
+        <table className={styles.table} style={{ border: "2px solid #222" }}>
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Data</th>
+              <th>Prazo de Validade</th>
+              <th>Países</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <hr style={{ margin: "20px 0" }} />
+          </thead>
+          <tbody>
+            {form.passports.map((p, i) => (
+              <tr key={i}>
+                <td>{p.number || ""}</td>
+                <td>{p.issueDate || ""}</td>
+                <td>{p.expiryDate || ""}</td>
+                <td>{p.country || ""}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )}
 
     {/* --- Repatriations --- */}
-    <div>
-      <div className={styles.sectionTitle}>Repatriações</div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Condições</th>
-            <th>Encargos para o Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(form?.repatriations || []).map((r, i) => (
-            <tr key={i}>
-              <td>{r.date}</td>
-              <td>{r.conditions}</td>
-              <td>{r.charges}</td>
+    {form?.repatriations && form.repatriations.length > 0 && (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Repatriações
+        </div>
+        <table className={styles.table} style={{ border: "2px solid #222" }}>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Condições</th>
+              <th>Encargos para o Estado</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    <hr style={{ margin: "20px 0" }} />
+          </thead>
+          <tbody>
+            {form.repatriations.map((r, i) => (
+              <tr key={i}>
+                <td>{r.date || ""}</td>
+                <td>{r.conditions || ""}</td>
+                <td>{r.charges || ""}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )}
 
     {/* --- Civil and Notary Acts --- */}
-    <div>
-      <div className={styles.sectionTitle}>Actos de Registo Civil e Notariado</div>
-      <div className={styles.dottedLine}></div>
-      <div>{form?.civilActs || ""}</div>
-      <div className={styles.dottedLine}></div>
-    </div>
-    <hr style={{ margin: "20px 0" }} />
+    {form?.civilActs && (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Actos de Registo Civil e Notariado
+        </div>
+        <div className={styles.dottedLine}></div>
+        <div>{form.civilActs || ""}</div>
+        <div className={styles.dottedLine}></div>
+      </>
+    )}
 
     {/* --- Observations --- */}
-    <div>
-      <div className={styles.sectionTitle}>Observações</div>
-      <div className={styles.dottedLine}></div>
-      <div>{form?.observations || ""}</div>
-    </div>
+    {form?.observations && (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Observações
+        </div>
+        <div className={styles.dottedLine}></div>
+        <div>{form.observations || ""}</div>
+      </>
+    )}
 
     {/* --- Footer --- */}
     <div className={styles.footerRow}>
