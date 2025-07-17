@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
 import EditConsularFileDialog from "./EditConsularFileDialog";
+import API from "../../../utils/api"; // <-- updated import path
 
 export default function ConsularFileTable() {
   const [records, setRecords] = useState([]);
@@ -30,8 +30,8 @@ export default function ConsularFileTable() {
   // Fetch data
   const fetchRecords = () => {
     setLoading(true);
-    axios
-      .get("http://localhost:5000/api/consular-files", {
+    API
+      .get("/consular-files", {
         params: {
           page: page + 1,
           limit: pageSize,
@@ -60,8 +60,8 @@ export default function ConsularFileTable() {
   };
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this file?")) {
-      axios
-        .delete(`http://localhost:5000/api/consular-files/${id}`)
+      API
+        .delete(`/consular-files/${id}`)
         .then(() => {
           setRecords((prev) => prev.filter((r) => r._id !== id));
         });

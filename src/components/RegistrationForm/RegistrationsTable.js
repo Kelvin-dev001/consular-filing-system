@@ -23,8 +23,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
 import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";
 import EditRegistrationDialog from "./EditRegistrationDialog";
+import API from "../../../utils/api"; // <-- Correct import path for your project
 
 export default function RegistrationsTable() {
   const [records, setRecords] = useState([]);
@@ -44,8 +44,8 @@ export default function RegistrationsTable() {
   // Fetch data
   const fetchRecords = () => {
     setLoading(true);
-    axios
-      .get("http://localhost:5000/api/registrations", {
+    API
+      .get("/registrations", {
         params: {
           page: page + 1,
           limit: pageSize,
@@ -77,8 +77,8 @@ export default function RegistrationsTable() {
   };
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this record?")) {
-      axios
-        .delete(`http://localhost:5000/api/registrations/${id}`)
+      API
+        .delete(`/registrations/${id}`)
         .then(() => {
           setRecords((prev) => prev.filter((r) => r._id !== id));
         });
