@@ -24,7 +24,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
 import CloseIcon from "@mui/icons-material/Close";
 import EditRegistrationDialog from "./EditRegistrationDialog";
-import API from "../../../utils/api"; // <-- Correct import path for your project
+import API from "../../utils/api"; // <-- Correct import path for your project
 
 export default function RegistrationsTable() {
   const [records, setRecords] = useState([]);

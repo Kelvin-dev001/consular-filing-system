@@ -14,7 +14,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditConsularFileDialog from "./EditConsularFileDialog";
-import API from "../../../utils/api"; // <-- updated import path
+import API from "../../utils/api"; // <-- updated import path
 
 export default function ConsularFileTable() {
   const [records, setRecords] = useState([]);
