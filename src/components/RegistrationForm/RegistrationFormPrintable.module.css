@@ -8,13 +8,58 @@
   box-sizing: border-box;
 }
 
-.header {
-  text-align: center;
+.topBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.logoImg {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  margin-left: 0;
+  margin-right: 22px;
+  display: block;
+}
+
+.titlesBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 2;
+  text-align: left;
+  margin-top: 10px;
+  margin-right: 15px;
+}
+
+.republicLine {
   font-weight: bold;
   font-size: 1.2em;
-  margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+.consuladoLine {
+  font-weight: bold;
+  font-size: 1.07em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.sectionTitlePrint {
+  text-align: left;
+  font-weight: bold;
+  margin: 14px 0 10px 0;
+  text-transform: uppercase;
+  font-size: 1.13em;
+  letter-spacing: 0.5px;
 }
 
 .sectionTitle {
@@ -26,40 +71,9 @@
   letter-spacing: 0.5px;
 }
 
-.infoRow {
-  margin-bottom: 7px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.docType {
-  font-weight: bold;
-  color: #b10056;
-}
-
-.locationField {
-  font-style: italic;
-  color: #444;
-}
-
-.detailsBlock {
-  border: 2px solid #222;
-  padding: 8px;
-  margin-bottom: 20px;
-  background: #fff;
-}
-
-.topRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
 .photoBox {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border: 2px solid #222;
   margin-left: 16px;
   display: flex;
@@ -69,8 +83,8 @@
 }
 
 .photoPreview {
-  width: 98px;
-  height: 98px;
+  width: 108px;
+  height: 108px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -111,12 +125,19 @@
   font-size: 1em;
 }
 
-img {
-  display: block;
-  margin: 0 auto 10px auto;
-  max-width: 110px;
-  max-height: 110px;
-  outline: none;
+.imagesRow {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.uploadedImg {
+  max-width: 160px;
+  max-height: 140px;
+  border: 1.5px solid #b10056;
+  border-radius: 4px;
+  margin-right: 8px;
+  background: #fff;
 }
 
 @media print {
@@ -157,8 +178,8 @@ img {
     max-height: 88px !important;
   }
   img {
-    max-width: 90px !important;
-    max-height: 90px !important;
+    max-width: 110px !important;
+    max-height: 110px !important;
     margin-bottom: 8px !important;
     outline: none !important;
   }

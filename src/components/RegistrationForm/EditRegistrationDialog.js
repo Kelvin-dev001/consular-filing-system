@@ -48,12 +48,14 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
     issuedOn: "",
     observations: "",
     passportPhoto: "",
+    formImages: [],
     spouse: {},
     familyMozambique: [],
     familyUnder15: [],
     ...registration
   });
   const [file, setFile] = useState(null);
+  const [newImages, setNewImages] = useState([]);
   const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
   const [uploading, setUploading] = useState(false);
 
@@ -83,6 +85,7 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
         issuedOn: "",
         observations: "",
         passportPhoto: "",
+        formImages: [],
         spouse: {},
         familyMozambique: [],
         familyUnder15: [],
@@ -90,6 +93,7 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
       });
     }
     setFile(null);
+    setNewImages([]);
   }, [registration]);
 
   // Handle primitive value changes
@@ -124,6 +128,18 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
   // File/photo handling
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
+  // Handle multiple images for formImages
+  const handleFormImagesChange = (e) => {
+    setNewImages(Array.from(e.target.files));
+  };
+
+  // Remove individual uploaded image
+  const handleRemoveFormImage = (idx) => {
+    const updated = [...(form.formImages || [])];
+    updated.splice(idx, 1);
+    setForm({ ...form, formImages: updated });
+  };
+
   // Submit handler
   const handleSubmit = async () => {
     setUploading(true);
@@ -139,9 +155,24 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
         newPhotoUrl = uploadRes.data.filePath || uploadRes.data.url;
       }
 
+      // Upload new images (for formImages) and merge with existing
+      let uploadedImageUrls = [];
+      if (newImages.length) {
+        for (let imgFile of newImages) {
+          const formData = new FormData();
+          formData.append("file", imgFile);
+          const uploadRes = await API.post("/upload", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          uploadedImageUrls.push(uploadRes.data.filePath || uploadRes.data.url);
+        }
+      }
+      const allFormImages = [...(form.formImages || []), ...uploadedImageUrls];
+
       await API.put(`/registration/${form._id}`, {
         ...form,
         passportPhoto: newPhotoUrl,
+        formImages: allFormImages,
       });
       setSnack({ open: true, message: "Registration updated successfully!", severity: "success" });
       setUploading(false);
@@ -212,6 +243,38 @@ export default function EditRegistrationDialog({ open, onClose, registration, on
                 <input type="file" hidden accept="image/*" onChange={handleFileChange} />
               </Button>
               {file && <Typography variant="body2">Selected: {file.name}</Typography>}
+
+              {/* Form images */}
+              <Divider sx={{ my: 2 }}>Attached Images (for print form)</Divider>
+              {form.formImages && form.formImages.length > 0 && (
+                <Box sx={{ mb: 1 }}>
+                  {form.formImages.map((img, idx) => (
+                    <Box key={idx} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                      <a href={img} target="_blank" rel="noopener noreferrer" style={{ marginRight: 8 }}>
+                        <img src={img} alt={`Form image ${idx + 1}`} style={{ width: 60, height: 40, objectFit: "cover", borderRadius: 2, border: "1px solid #ccc" }} />
+                      </a>
+                      <IconButton color="error" size="small" onClick={() => handleRemoveFormImage(idx)}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+              <Button
+                variant="outlined"
+                component="label"
+                fullWidth
+                sx={{ mb: 1 }}
+                disabled={uploading}
+              >
+                Add Images
+                <input type="file" hidden accept="image/*" onChange={handleFormImagesChange} multiple />
+              </Button>
+              {newImages && newImages.length > 0 && (
+                <Typography variant="body2" sx={{ mb: 1 }}>
+                  New images: {newImages.map(f => f.name).join(", ")}
+                </Typography>
+              )}
             </Grid>
           </Grid>
           {/* Spouse */}

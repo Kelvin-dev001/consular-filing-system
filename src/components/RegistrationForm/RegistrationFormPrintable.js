@@ -5,39 +5,32 @@ const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // <--- update as needed
 
 const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
   <div ref={ref} className={styles.printableForm}>
-    {/* --- Emblem, Title, and Photo --- */}
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-      {/* Emblem */}
+    {/* --- Logo and Titles Row --- */}
+    <div className={styles.topBar}>
+      {/* Emblem (logo) */}
       <img
         src={EMBLEM_SRC}
         alt="Emblema da República de Moçambique"
-        style={{
-          width: 100,
-          height: 100,
-          objectFit: "contain",
-          marginLeft: "auto",
-          marginRight: "auto"
-        }}
+        className={styles.logoImg}
       />
+      {/* Titles block */}
+      <div className={styles.titlesBlock}>
+        <div className={styles.republicLine}>REPÚBLICA DE MOÇAMBIQUE</div>
+        <div className={styles.consuladoLine}>CONSULADO DA REPÚBLICA DE<br/>MOÇAMBIQUE EM MOMBASA</div>
+        <div className={styles.sectionTitlePrint}>INSCRIÇÃO CONSULAR</div>
+      </div>
       {/* Photo box or user photo */}
-      <div style={{ width: 110, height: 110, border: "2px solid #222", marginLeft: 16, display: "flex", alignItems: "center", justifyContent: "center", background: '#fff' }}>
+      <div className={styles.photoBox}>
         {form?.passportPhoto ? (
           <img
             src={typeof form.passportPhoto === "string" ? form.passportPhoto : URL.createObjectURL(form.passportPhoto)}
             alt="Foto do Passaporte"
-            style={{ width: "98px", height: "98px", objectFit: "cover", borderRadius: 4 }}
+            className={styles.photoPreview}
           />
         ) : null}
       </div>
     </div>
-    {/* --- Form Header --- */}
-    <div className={styles.header}>
-      REPÚBLICA DE MOÇAMBIQUE<br />
-      CONSULADO DA REPÚBLICA DE MOÇAMBIQUE EM MOMBASA
-    </div>
-    <div className={styles.sectionTitle}>
-      INSCRIÇÃO CONSULAR
-    </div>
+    {/* -- Form meta -- */}
     <div style={{ marginTop: 20 }}>
       <b>INSC. CONSULAR Nº:</b> {form?.fileNumber || "_________________________"}
       <br />
@@ -47,7 +40,7 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
     </div>
     <hr style={{ margin: "20px 0" }} />
 
-    {/* --- All Details Stuck Together (No Section Headers) --- */}
+    {/* --- All Details --- */}
     <div style={{ border: "2px solid #222", padding: "8px", marginBottom: 20 }}>
       <div>Nome completo: {form?.fullName || "______________________________________________"}</div>
       <div>País e local de nascimento: {form?.countryPlaceOfBirth || "______________________________________________"}</div>
@@ -253,6 +246,25 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
         </div>
         <div className={styles.dottedLine}></div>
         <div>{form.observations || ""}</div>
+      </>
+    )}
+
+    {/* --- Attached Uploaded Images --- */}
+    {form?.formImages && Array.isArray(form.formImages) && form.formImages.length > 0 && (
+      <>
+        <div className={styles.sectionTitle} style={{ marginBottom: 8 }}>
+          Imagens Anexadas
+        </div>
+        <div className={styles.imagesRow}>
+          {form.formImages.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`Form image ${idx + 1}`}
+              className={styles.uploadedImg}
+            />
+          ))}
+        </div>
       </>
     )}
 
