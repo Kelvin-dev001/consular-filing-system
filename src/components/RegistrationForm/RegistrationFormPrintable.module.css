@@ -8,55 +8,51 @@
   box-sizing: border-box;
 }
 
-.topBar {
+.logoRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.logoImg {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.headerPhotoRow {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-.logoImg {
-  width: 130px;
-  height: 130px;
-  object-fit: contain;
-  margin-left: 0;
-  margin-right: 22px;
-  display: block;
-}
-
-.titlesBlock {
+.headerBlock {
+  flex: 1.5;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: flex-start;
-  align-items: flex-start;
-  flex: 2;
-  text-align: left;
-  margin-top: 10px;
-  margin-right: 15px;
+  padding-top: 0px;
 }
 
-.republicLine {
+.headerLine {
   font-weight: bold;
-  font-size: 1.2em;
+  font-size: 1.15em;
   text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.consuladoLine {
-  font-weight: bold;
-  font-size: 1.07em;
-  text-transform: uppercase;
-  margin-top: 3px;
-  margin-bottom: 8px;
   letter-spacing: 0.5px;
-  line-height: 1.2;
+  text-align: center;
+  line-height: 1.1;
+  margin: 0;
 }
 
 .sectionTitlePrint {
-  text-align: left;
+  text-align: center;
   font-weight: bold;
-  margin: 14px 0 10px 0;
+  margin: 18px 0 14px 0;
   text-transform: uppercase;
   font-size: 1.13em;
   letter-spacing: 0.5px;
@@ -72,10 +68,11 @@
 }
 
 .photoBox {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border: 2px solid #222;
-  margin-left: 16px;
+  margin-left: 45px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,8 +80,8 @@
 }
 
 .photoPreview {
-  width: 108px;
-  height: 108px;
+  width: 98px;
+  height: 98px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -183,7 +180,6 @@
     margin-bottom: 8px !important;
     outline: none !important;
   }
-  /* Hide buttons/controls in print (if any) */
   button, .no-print {
     display: none !important;
   }

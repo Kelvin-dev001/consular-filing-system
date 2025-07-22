@@ -1,25 +1,25 @@
 import React from "react";
 import styles from './RegistrationFormPrintable.module.css';
 
-const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // <--- update as needed
+const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // Update path as needed
 
 const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
   <div ref={ref} className={styles.printableForm}>
-    {/* --- Logo and Titles Row --- */}
-    <div className={styles.topBar}>
-      {/* Emblem (logo) */}
+    {/* --- Logo centered at top --- */}
+    <div className={styles.logoRow}>
       <img
         src={EMBLEM_SRC}
         alt="Emblema da República de Moçambique"
         className={styles.logoImg}
       />
-      {/* Titles block */}
-      <div className={styles.titlesBlock}>
-        <div className={styles.republicLine}>REPÚBLICA DE MOÇAMBIQUE</div>
-        <div className={styles.consuladoLine}>CONSULADO DA REPÚBLICA DE<br/>MOÇAMBIQUE EM MOMBASA</div>
-        <div className={styles.sectionTitlePrint}>INSCRIÇÃO CONSULAR</div>
+    </div>
+    {/* --- Header and photo row --- */}
+    <div className={styles.headerPhotoRow}>
+      <div className={styles.headerBlock}>
+        <div className={styles.headerLine}>REPÚBLICA DE MOÇAMBIQUE</div>
+        <div className={styles.headerLine}>CONSULADO DA REPÚBLICA DE</div>
+        <div className={styles.headerLine}>MOÇAMBIQUE EM MOMBASA</div>
       </div>
-      {/* Photo box or user photo */}
       <div className={styles.photoBox}>
         {form?.passportPhoto ? (
           <img
@@ -30,15 +30,17 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
         ) : null}
       </div>
     </div>
-    {/* -- Form meta -- */}
-    <div style={{ marginTop: 20 }}>
-      <b>INSC. CONSULAR Nº:</b> {form?.fileNumber || "_________________________"}
-      <br />
-      <b>DATA DE EMISSÃO:</b> {form?.issuedOn || "____/____/______"}
-      <br />
-      <b>VALIDADE:</b> {form?.validity || "_____/_____/_____"}
+    <div className={styles.sectionTitlePrint}>
+      INSCRIÇÃO CONSULAR
     </div>
-    <hr style={{ margin: "20px 0" }} />
+    <div style={{ marginTop: 20, marginBottom: 12 }}>
+      <b>INSC. CONSULAR Nº</b> {form?.fileNumber || "_________________________"}
+      <br />
+      <b>DATA DE EMISSÃO</b> {form?.issuedOn || "____/____/______"}
+      <br />
+      <b>VALIDADE</b> {form?.validity || "_____/_____/_____"}
+    </div>
+    <hr style={{ margin: "16px 0" }} />
 
     {/* --- All Details --- */}
     <div style={{ border: "2px solid #222", padding: "8px", marginBottom: 20 }}>
