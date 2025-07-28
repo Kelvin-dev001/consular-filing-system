@@ -1,5 +1,5 @@
 .printableForm {
-  background: #f9b6d1;
+  background: #fff; /* White background for both preview and print */
   padding: 32px;
   font-family: Arial, serif;
   color: #111;
@@ -139,7 +139,7 @@
 
 @media print {
   .printableForm {
-    background: none !important;
+    background: #fff !important;     /* White background in print */
     box-shadow: none !important;
     padding: 6px !important;
     margin: 0 !important;
@@ -153,7 +153,7 @@
     print-color-adjust: exact !important;
   }
   .table th, .table td {
-    background: none !important;
+    background: #fff !important;
     color: #111 !important;
     border: 1px solid #222 !important;
     border-width: 1px !important;
@@ -166,7 +166,7 @@
   }
   .photoBox {
     border: 1px solid #222 !important;
-    background: none !important;
+    background: #fff !important;
     width: 95px !important;
     height: 95px !important;
   }

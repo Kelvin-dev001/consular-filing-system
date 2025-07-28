@@ -2,12 +2,14 @@ import React, { useRef } from "react";
 import RegistrationFormPrintable from "./RegistrationFormPrintable";
 import { Button, Box, Typography } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
 export default function ConfirmationPage({ form }) {
   const printRef = useRef();
+  const navigate = useNavigate();
 
   const handlePrint = () => {
-    // Print only the contents of the printable form
     const printContents = printRef.current.innerHTML;
     const printWindow = window.open('', '', 'height=900,width=800');
     printWindow.document.write(`
@@ -16,7 +18,7 @@ export default function ConfirmationPage({ form }) {
           <title>Imprimir Inscrição Consular</title>
           <link rel="stylesheet" href="/RegistrationFormPrintable.module.css" />
           <style>
-            body { font-family: Arial, serif; background: #f9b6d1; }
+            body { font-family: Arial, serif; background: #fff; }
           </style>
         </head>
         <body>
@@ -29,6 +31,11 @@ export default function ConfirmationPage({ form }) {
     printWindow.print();
   };
 
+  const handleBack = () => {
+    // Go back to the registration wizard for editing
+    navigate("/registration-form", { state: { form } });
+  };
+
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", mt: 4, mb: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
@@ -36,17 +43,26 @@ export default function ConfirmationPage({ form }) {
       </Typography>
       <Typography align="center" color="text.secondary" sx={{ mb: 3 }}>
         Revise os dados abaixo. Se estiver tudo correto, clique em <b>Imprimir</b> para obter sua ficha.<br />
-        Caso precise corrigir, utilize o botão "Voltar" do navegador ou o menu do sistema.
+        Caso precise corrigir, utilize o botão <b>Voltar</b> para editar.
       </Typography>
       <div ref={printRef}>
         <RegistrationFormPrintable form={form} />
       </div>
-      <Box sx={{ textAlign: "center", mt: 3 }}>
+      <Box sx={{ textAlign: "center", mt: 3, display: "flex", justifyContent: "center", gap: 2 }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleBack}
+          sx={{ px: 4 }}
+          startIcon={<ArrowBackIcon />}
+        >
+          Voltar
+        </Button>
         <Button
           variant="contained"
           color="primary"
           onClick={handlePrint}
-          sx={{ mr: 2, px: 4 }}
+          sx={{ px: 4 }}
           startIcon={<PrintIcon />}
         >
           Imprimir
