@@ -1,11 +1,11 @@
 import React from "react";
 import styles from './RegistrationFormPrintable.module.css';
 
-const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // Ensure this is a public/static path
+const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // Ensure this is in your public/ directory
 
 const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
   <div ref={ref} className={styles.printableForm}>
-    {/* Logo centered at top */}
+    {/* --- Logo centered at the very top --- */}
     <div className={styles.logoRow}>
       <img
         src={EMBLEM_SRC}
@@ -14,8 +14,9 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
         crossOrigin="anonymous"
       />
     </div>
-    {/* Titles and passport photo side by side, aligned horizontally */}
-    <div className={styles.titlesPhotoRow}>
+
+    {/* --- Titles and passport photo box in one row --- */}
+    <div className={styles.headerRowFlex}>
       <div className={styles.titlesBlock}>
         <div className={styles.headerLine}>REPÚBLICA DE MOÇAMBIQUE</div>
         <div className={styles.headerLine}>CONSULADO DA REPÚBLICA DE</div>
@@ -37,6 +38,7 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
         ) : null}
       </div>
     </div>
+
     <div className={styles.metaSection}>
       <b>INSC. CONSULAR Nº</b> {form?.fileNumber || "_________________________"}
       <br />
@@ -46,7 +48,7 @@ const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
     </div>
     <hr style={{ margin: "16px 0" }} />
 
-    {/* --- All Details --- */}
+    {/* --- Main Details Section --- */}
     <div style={{ border: "2px solid #222", padding: "8px", marginBottom: 20 }}>
       <div>Nome completo: {form?.fullName || "______________________________________________"}</div>
       <div>País e local de nascimento: {form?.countryPlaceOfBirth || "______________________________________________"}</div>
