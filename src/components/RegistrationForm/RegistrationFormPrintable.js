@@ -1,39 +1,43 @@
 import React from "react";
 import styles from './RegistrationFormPrintable.module.css';
 
-const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // Update path as needed
+const EMBLEM_SRC = "/emblem-mozambique.jpeg"; // Ensure this is a public/static path
 
 const RegistrationFormPrintable = React.forwardRef(({ form }, ref) => (
   <div ref={ref} className={styles.printableForm}>
-    {/* --- Logo centered at top --- */}
+    {/* Logo centered at top */}
     <div className={styles.logoRow}>
       <img
         src={EMBLEM_SRC}
         alt="Emblema da República de Moçambique"
         className={styles.logoImg}
+        crossOrigin="anonymous"
       />
     </div>
-    {/* --- Header and photo row --- */}
-    <div className={styles.headerPhotoRow}>
-      <div className={styles.headerBlock}>
+    {/* Titles and passport photo side by side, aligned horizontally */}
+    <div className={styles.titlesPhotoRow}>
+      <div className={styles.titlesBlock}>
         <div className={styles.headerLine}>REPÚBLICA DE MOÇAMBIQUE</div>
         <div className={styles.headerLine}>CONSULADO DA REPÚBLICA DE</div>
         <div className={styles.headerLine}>MOÇAMBIQUE EM MOMBASA</div>
+        <div className={styles.sectionTitlePrint}>INSCRIÇÃO CONSULAR</div>
       </div>
       <div className={styles.photoBox}>
         {form?.passportPhoto ? (
           <img
-            src={typeof form.passportPhoto === "string" ? form.passportPhoto : URL.createObjectURL(form.passportPhoto)}
+            src={
+              typeof form.passportPhoto === "string"
+                ? form.passportPhoto
+                : URL.createObjectURL(form.passportPhoto)
+            }
             alt="Foto do Passaporte"
             className={styles.photoPreview}
+            crossOrigin="anonymous"
           />
         ) : null}
       </div>
     </div>
-    <div className={styles.sectionTitlePrint}>
-      INSCRIÇÃO CONSULAR
-    </div>
-    <div style={{ marginTop: 20, marginBottom: 12 }}>
+    <div className={styles.metaSection}>
       <b>INSC. CONSULAR Nº</b> {form?.fileNumber || "_________________________"}
       <br />
       <b>DATA DE EMISSÃO</b> {form?.issuedOn || "____/____/______"}
