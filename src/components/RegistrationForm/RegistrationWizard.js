@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Stepper,
   Step,
@@ -90,7 +91,9 @@ const steps = [
 ];
 
 export default function RegistrationWizard() {
-  const [form, setForm] = useState(initialForm);
+  const location = useLocation();
+  // If location.state?.form exists, use it; otherwise use initialForm
+  const [form, setForm] = useState(() => location.state?.form || initialForm);
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
