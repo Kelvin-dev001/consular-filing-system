@@ -9,7 +9,8 @@ const Dots = ({ length = 30 }) => (
 
 export default function RegistrationFormPrintable({ form }) {
   // Helper for field display (blank if missing)
-  const show = (val, len = 20) => val && val !== "" ? val : <Dots length={len} />;
+  const show = (val, len = 20) =>
+    val && val !== "" ? <span>{val}</span> : <Dots length={len} />;
 
   // Passport photo logic
   let passPhoto = null;
@@ -40,6 +41,10 @@ export default function RegistrationFormPrintable({ form }) {
   const tableStyle = { width: "100%", borderCollapse: "collapse", marginBottom: 12 };
   const tdStyle = { border: "1.5px solid #222", padding: "3px 6px", fontSize: "1em" };
 
+  // Helper for family arrays with at least n rows
+  const fillRows = (arr, n, cols) =>
+    [...Array(Math.max(n, arr?.length || 0))].map((_, i) => arr?.[i] || Object.fromEntries(cols.map(c => [c, ""])));
+
   return (
     <div style={{
       background: "#fff",
@@ -54,7 +59,7 @@ export default function RegistrationFormPrintable({ form }) {
       {/* HEADER */}
       <div style={{ textAlign: "center", marginTop: 25, marginBottom: 6 }}>
         <img
-          src="/emblem-mozambique.jpeg"
+          src="/emblem-mozambique.png"
           alt="Emblema"
           style={{
             width: 80,
@@ -122,10 +127,10 @@ export default function RegistrationFormPrintable({ form }) {
         paddingLeft: 24
       }}>
         <div>
-          <b>INSC. CONSULAR Nº</b> <Dots length={30} />
+          <b>INSC. CONSULAR Nº</b> {show(form.fileNumber, 30)}
         </div>
         <div>
-          <b>DATA DE EMISSÃO</b> <Dots length={18} /> <b>VALIDADE</b> <Dots length={18} />
+          <b>DATA DE EMISSÃO</b> {show(form.issuedOn, 18)} <b>VALIDADE</b> {show(form.validity, 18)}
         </div>
       </div>
 
@@ -136,37 +141,37 @@ export default function RegistrationFormPrintable({ form }) {
         padding: "2px 10px 2px 10px"
       }}>
         <div>
-          Nome completo <Dots length={70} />
+          Nome completo {show(form.fullName, 70)}
         </div>
         <div>
-          País e local de nascimento <Dots length={56} />
+          País e local de nascimento {show(form.countryPlaceOfBirth, 56)}
         </div>
         <div>
-          Data de Nascimento <Dots length={6}/> de <Dots length={8}/> de <Dots length={10}/> &nbsp; Estado Civil <Dots length={20}/>
+          Data de Nascimento {show(form.birthDate, 12)} &nbsp; Estado Civil {show(form.maritalStatus, 20)}
         </div>
         <div>
-          Nome do Pai <Dots length={56}/>
+          Nome do Pai {show(form.fatherName, 56)}
         </div>
         <div>
-          Nome da Mãe <Dots length={56}/>
+          Nome da Mãe {show(form.motherName, 56)}
         </div>
         <div>
-          Habilitações Literárias <Dots length={14}/> profissão <Dots length={20}/> Local de trabalho <Dots length={22}/>
+          Habilitações Literárias {show(form.education, 14)} profissão {show(form.profession, 20)} Local de trabalho {show(form.workplaceOrSchool, 22)}
         </div>
         <div>
-          Telefone <Dots length={16}/> (Estudante, local de ensino) <Dots length={32}/>
+          Telefone {show(form.phone, 16)} (Estudante, local de ensino) {show(form.workplaceOrSchool, 32)}
         </div>
         <div>
-          Portador de passaporte/C. Emergencia/BI/Cédula pessoal Nº <Dots length={30}/> Emitido em <Dots length={16}/>
+          Portador de passaporte/C. Emergencia/BI/Cédula pessoal Nº {show(form.passportOrIdNumber, 30)} Emitido em {show(form.passportIssuedAt, 16)}
         </div>
         <div>
-          Aos <Dots length={6}/> de <Dots length={6}/> válido até <Dots length={6}/> de <Dots length={6}/> de <Dots length={8}/> Última residência em Moçambique <Dots length={18}/>
+          Válido até {show(form.passportValidUntil, 16)} Última residência em Moçambique {show(form.residenceMozambique, 18)}
         </div>
         <div>
-          Endereço da residência em Quénia <Dots length={26}/> Localidade <Dots length={20}/>
+          Endereço da residência em Quénia {show(form.residenceKenya, 26)} Localidade {show(form.location, 20)}
         </div>
         <div>
-          Distrito <Dots length={16}/> Telefone Celular <Dots length={26}/>
+          Distrito {show(form.district, 16)} Telefone Celular {show(form.cellPhone, 26)}
         </div>
       </div>
 
@@ -187,13 +192,13 @@ export default function RegistrationFormPrintable({ form }) {
         padding: "2px 10px 2px 10px"
       }}>
         <div>
-          Nome completo <Dots length={60}/>
+          Nome completo {show(form.spouse?.fullName, 60)}
         </div>
         <div>
-          Nacionalidade <Dots length={16}/> Documento de identificação <Dots length={36}/>
+          Nacionalidade {show(form.spouse?.nationality, 16)} Documento de identificação {show(form.spouse?.idDocument, 36)}
         </div>
         <div>
-          Profissão <Dots length={24}/> Local de trabalho <Dots length={26}/> Celular Nº <Dots length={18}/>
+          Profissão {show(form.spouse?.profession, 24)} Local de trabalho {show(form.spouse?.workplace, 26)} Celular Nº {show(form.spouse?.cellPhone, 18)}
         </div>
       </div>
 
@@ -219,21 +224,13 @@ export default function RegistrationFormPrintable({ form }) {
             </tr>
           </thead>
           <tbody>
-            {form.familyMozambique && form.familyMozambique.length > 0
-              ? form.familyMozambique.map((f, i) => (
-                  <tr key={i}>
-                    <td style={tdStyle}>{show(f.name, 18)}</td>
-                    <td style={tdStyle}>{show(f.relationship, 18)}</td>
-                    <td style={tdStyle}>{show(f.residence, 24)}</td>
-                  </tr>
-                ))
-              : [...Array(3)].map((_, i) => (
-                  <tr key={i}>
-                    <td style={tdStyle}><Dots length={18}/></td>
-                    <td style={tdStyle}><Dots length={18}/></td>
-                    <td style={tdStyle}><Dots length={24}/></td>
-                  </tr>
-                ))}
+            {fillRows(form.familyMozambique, 3, ["name", "relationship", "residence"]).map((f, i) => (
+              <tr key={i}>
+                <td style={tdStyle}>{show(f.name, 18)}</td>
+                <td style={tdStyle}>{show(f.relationship, 18)}</td>
+                <td style={tdStyle}>{show(f.residence, 24)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -271,21 +268,13 @@ export default function RegistrationFormPrintable({ form }) {
               </tr>
             </thead>
             <tbody>
-              {form.familyUnder15 && form.familyUnder15.length > 0
-                ? form.familyUnder15.map((f, i) => (
-                    <tr key={i}>
-                      <td style={tdStyle}>{show(f.name, 18)}</td>
-                      <td style={tdStyle}>{show(f.relationship, 18)}</td>
-                      <td style={tdStyle}>{show(f.age, 10)}</td>
-                    </tr>
-                  ))
-                : [...Array(2)].map((_, i) => (
-                    <tr key={i}>
-                      <td style={tdStyle}><Dots length={18}/></td>
-                      <td style={tdStyle}><Dots length={18}/></td>
-                      <td style={tdStyle}><Dots length={10}/></td>
-                    </tr>
-                  ))}
+              {fillRows(form.familyUnder15, 2, ["name", "relationship", "age"]).map((f, i) => (
+                <tr key={i}>
+                  <td style={tdStyle}>{show(f.name, 18)}</td>
+                  <td style={tdStyle}>{show(f.relationship, 18)}</td>
+                  <td style={tdStyle}>{show(f.age, 10)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -303,7 +292,7 @@ export default function RegistrationFormPrintable({ form }) {
           marginBottom: 10,
           padding: "2px 10px 2px 10px"
         }}>
-          Número de cartão <Dots length={32}/> Data de Emissão <Dots length={16}/>
+          Número de cartão {show(form.consularCardNumber, 32)} Data de Emissão {show(form.consularCardIssueDate, 16)}
         </div>
 
         {/* Passports */}
@@ -329,23 +318,14 @@ export default function RegistrationFormPrintable({ form }) {
               </tr>
             </thead>
             <tbody>
-              {form.passports && form.passports.length > 0
-                ? form.passports.map((p, i) => (
-                    <tr key={i}>
-                      <td style={tdStyle}>{show(p.number, 12)}</td>
-                      <td style={tdStyle}>{show(p.issueDate, 12)}</td>
-                      <td style={tdStyle}>{show(p.expiryDate, 14)}</td>
-                      <td style={tdStyle}>{show(p.country, 14)}</td>
-                    </tr>
-                  ))
-                : [...Array(2)].map((_, i) => (
-                    <tr key={i}>
-                      <td style={tdStyle}><Dots length={12}/></td>
-                      <td style={tdStyle}><Dots length={12}/></td>
-                      <td style={tdStyle}><Dots length={14}/></td>
-                      <td style={tdStyle}><Dots length={14}/></td>
-                    </tr>
-                  ))}
+              {fillRows(form.passports, 2, ["number", "issueDate", "expiryDate", "country"]).map((p, i) => (
+                <tr key={i}>
+                  <td style={tdStyle}>{show(p.number, 12)}</td>
+                  <td style={tdStyle}>{show(p.issueDate, 12)}</td>
+                  <td style={tdStyle}>{show(p.expiryDate, 14)}</td>
+                  <td style={tdStyle}>{show(p.country, 14)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -372,21 +352,13 @@ export default function RegistrationFormPrintable({ form }) {
               </tr>
             </thead>
             <tbody>
-              {form.repatriations && form.repatriations.length > 0
-                ? form.repatriations.map((r, i) => (
-                    <tr key={i}>
-                      <td style={tdStyle}>{show(r.date, 12)}</td>
-                      <td style={tdStyle}>{show(r.conditions, 20)}</td>
-                      <td style={tdStyle}>{show(r.charges, 18)}</td>
-                    </tr>
-                  ))
-                : [...Array(2)].map((_, i) => (
-                    <tr key={i}>
-                      <td style={tdStyle}><Dots length={12}/></td>
-                      <td style={tdStyle}><Dots length={20}/></td>
-                      <td style={tdStyle}><Dots length={18}/></td>
-                    </tr>
-                  ))}
+              {fillRows(form.repatriations, 2, ["date", "conditions", "charges"]).map((r, i) => (
+                <tr key={i}>
+                  <td style={tdStyle}>{show(r.date, 12)}</td>
+                  <td style={tdStyle}>{show(r.conditions, 20)}</td>
+                  <td style={tdStyle}>{show(r.charges, 18)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -405,9 +377,12 @@ export default function RegistrationFormPrintable({ form }) {
           marginBottom: 10,
           padding: "6px 8px"
         }}>
-          {[...Array(4)].map((_, i) => (
-            <div key={i}><Dots length={110}/></div>
-          ))}
+          {form.civilActs
+            ? <div>{form.civilActs}</div>
+            : [...Array(4)].map((_, i) => (
+                <div key={i}><Dots length={110}/></div>
+              ))
+          }
         </div>
 
         {/* Footer: Place, Date, Observations */}
@@ -420,7 +395,7 @@ export default function RegistrationFormPrintable({ form }) {
           </span>
         </div>
         <div style={{marginTop: 6}}>
-          Observações <Dots length={70}/>
+          Observações {show(form.observations, 70)}
         </div>
       </div>
     </div>
