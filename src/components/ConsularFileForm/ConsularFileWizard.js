@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import API from "../../utils/api";
+import API, { fetchRegistrationByFileNumber } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ConsularFileWizard.css";
@@ -31,6 +31,11 @@ const initialForm = {
   name: "",
   openedOn: "",
   spouse: "",
+  spouseNationality: "",
+  spouseProfession: "",
+  spouseWorkplace: "",
+  spouseIdDocument: "",
+  spouseCellPhone: "",
   observations: "",
   passportsGranted: [{ number: "", issueDate: "", expiryDate: "", country: "" }],
   repatriations: [{ date: "", conditions: "", stateCharges: "" }],
@@ -46,6 +51,7 @@ export default function ConsularFileWizard() {
   const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [lookupStatus, setLookupStatus] = useState({ loading: false, found: false, error: "" });
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -117,6 +123,75 @@ export default function ConsularFileWizard() {
 
   const handleFileChange = (e) => setForm(f => ({ ...f, attachment: e.target.files[0] }));
 
+  // ---- Registration lookup and auto-populate ----
+  // Called when user types/changes fileNumber
+  const handleFileNumberChange = async (e) => {
+    const fileNumber = e.target.value;
+    setForm(f => ({
+      ...f,
+      fileNumber,
+      // Optionally clear auto-populated fields if fileNumber is changed
+      ...(fileNumber.length < 3
+        ? {
+            name: "",
+            spouse: "",
+            spouseNationality: "",
+            spouseProfession: "",
+            spouseWorkplace: "",
+            spouseIdDocument: "",
+            spouseCellPhone: "",
+            passportsGranted: [{ number: "", issueDate: "", expiryDate: "", country: "" }]
+          }
+        : {})
+    }));
+
+    if (fileNumber && fileNumber.length > 2) {
+      setLookupStatus({ loading: true, found: false, error: "" });
+      try {
+        const reg = await fetchRegistrationByFileNumber(fileNumber);
+
+        // Auto-populate name, spouse, and passport(s)
+        setForm(f => ({
+          ...f,
+          fileNumber,
+          name: reg.fullName || "",
+          spouse: reg.spouse?.fullName || "",
+          spouseNationality: reg.spouse?.nationality || "",
+          spouseProfession: reg.spouse?.profession || "",
+          spouseWorkplace: reg.spouse?.workplace || "",
+          spouseIdDocument: reg.spouse?.idDocument || "",
+          spouseCellPhone: reg.spouse?.cellPhone || "",
+          passportsGranted:
+            Array.isArray(reg.passports) && reg.passports.length > 0
+              ? reg.passports.map(p => ({
+                  number: p.number || "",
+                  issueDate: p.issueDate ? p.issueDate.slice(0, 10) : "", // ensure yyyy-mm-dd
+                  expiryDate: p.expiryDate ? p.expiryDate.slice(0, 10) : "",
+                  country: p.country || ""
+                }))
+              : [{ number: "", issueDate: "", expiryDate: "", country: "" }]
+        }));
+        setLookupStatus({ loading: false, found: true, error: "" });
+      } catch (err) {
+        setLookupStatus({ loading: false, found: false, error: "Registration not found." });
+        // Optionally clear fields if not found
+        setForm(f => ({
+          ...f,
+          name: "",
+          spouse: "",
+          spouseNationality: "",
+          spouseProfession: "",
+          spouseWorkplace: "",
+          spouseIdDocument: "",
+          spouseCellPhone: "",
+          passportsGranted: [{ number: "", issueDate: "", expiryDate: "", country: "" }]
+        }));
+      }
+    } else {
+      setLookupStatus({ loading: false, found: false, error: "" });
+    }
+  };
+
   // STEP VALIDATION
   function validateStep(stepData, stepIdx) {
     switch (stepIdx) {
@@ -154,7 +229,7 @@ export default function ConsularFileWizard() {
     return "";
   }
 
-  // NAVIGATION
+  // NAVIGATION (fix: do not reset on mount, only on submit)
   const handleNext = () => {
     setError("");
     const err = validateStep(form, activeStep);
@@ -189,6 +264,11 @@ export default function ConsularFileWizard() {
         name: form.name,
         openedOn: form.openedOn ? new Date(form.openedOn) : null,
         spouse: form.spouse,
+        spouseNationality: form.spouseNationality,
+        spouseProfession: form.spouseProfession,
+        spouseWorkplace: form.spouseWorkplace,
+        spouseIdDocument: form.spouseIdDocument,
+        spouseCellPhone: form.spouseCellPhone,
         observations: form.observations,
         passportsGranted: form.passportsGranted,
         repatriations: form.repatriations,
@@ -220,6 +300,7 @@ export default function ConsularFileWizard() {
     }
   }
 
+  // Only show confirm dialog on last step, not auto-submit
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -242,19 +323,111 @@ export default function ConsularFileWizard() {
           <Grid container spacing={2}>
             <Grid item xs={12}><Typography variant="h6">{steps[0]}</Typography></Grid>
             <Grid item xs={6}>
-              <TextField label={t("fileNumber", "File Number")} name="fileNumber" fullWidth value={form.fileNumber} onChange={handleChange} required />
+              <TextField
+                label={t("fileNumber", "File Number")}
+                name="fileNumber"
+                fullWidth
+                value={form.fileNumber}
+                onChange={handleFileNumberChange}
+                required
+                helperText={
+                  lookupStatus.loading
+                    ? "Looking up registration..."
+                    : lookupStatus.error
+                    ? lookupStatus.error
+                    : lookupStatus.found
+                    ? "Registration found and data loaded."
+                    : ""
+                }
+                error={!!lookupStatus.error}
+              />
             </Grid>
             <Grid item xs={6}>
-              <TextField label={t("openedOn", "Opened On")} name="openedOn" type="date" InputLabelProps={{ shrink: true }} fullWidth value={form.openedOn} onChange={handleChange} required />
+              <TextField
+                label={t("openedOn", "Opened On")}
+                name="openedOn"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+                value={form.openedOn}
+                onChange={handleChange}
+                required
+              />
             </Grid>
             <Grid item xs={6}>
-              <TextField label={t("fullName", "Full Name")} name="name" fullWidth value={form.name} onChange={handleChange} required />
+              <TextField
+                label={t("fullName", "Full Name")}
+                name="name"
+                fullWidth
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
             </Grid>
             <Grid item xs={6}>
-              <TextField label={t("spouse", "Spouse")} name="spouse" fullWidth value={form.spouse} onChange={handleChange} />
+              <TextField
+                label={t("spouse", "Spouse")}
+                name="spouse"
+                fullWidth
+                value={form.spouse}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label={t("spouseNationality", "Spouse Nationality")}
+                name="spouseNationality"
+                fullWidth
+                value={form.spouseNationality}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label={t("spouseProfession", "Spouse Profession")}
+                name="spouseProfession"
+                fullWidth
+                value={form.spouseProfession}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label={t("spouseWorkplace", "Spouse Workplace")}
+                name="spouseWorkplace"
+                fullWidth
+                value={form.spouseWorkplace}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label={t("spouseIdDocument", "Spouse ID Document")}
+                name="spouseIdDocument"
+                fullWidth
+                value={form.spouseIdDocument}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label={t("spouseCellPhone", "Spouse Cell Phone")}
+                name="spouseCellPhone"
+                fullWidth
+                value={form.spouseCellPhone}
+                onChange={handleChange}
+              />
             </Grid>
             <Grid item xs={12}>
-              <TextField label={t("observations", "Observations")} name="observations" fullWidth multiline minRows={2} value={form.observations} onChange={handleChange} />
+              <TextField
+                label={t("observations", "Observations")}
+                name="observations"
+                fullWidth
+                multiline
+                minRows={2}
+                value={form.observations}
+                onChange={handleChange}
+              />
             </Grid>
           </Grid>
         );
@@ -265,16 +438,48 @@ export default function ConsularFileWizard() {
             {form.passportsGranted.map((item, idx) => (
               <React.Fragment key={`passport-${idx}`}>
                 <Grid item xs={3}>
-                  <TextField label={t("number", "Number")} name="number" fullWidth value={item.number} onChange={e => handlePassportsChange(idx, e)} required />
+                  <TextField
+                    label={t("number", "Number")}
+                    name="number"
+                    fullWidth
+                    value={item.number}
+                    onChange={e => handlePassportsChange(idx, e)}
+                    required
+                  />
                 </Grid>
                 <Grid item xs={3}>
-                  <TextField label={t("issueDate", "Issue Date")} name="issueDate" type="date" InputLabelProps={{ shrink: true }} fullWidth value={item.issueDate} onChange={e => handlePassportsChange(idx, e)} required />
+                  <TextField
+                    label={t("issueDate", "Issue Date")}
+                    name="issueDate"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    value={item.issueDate}
+                    onChange={e => handlePassportsChange(idx, e)}
+                    required
+                  />
                 </Grid>
                 <Grid item xs={3}>
-                  <TextField label={t("expiryDate", "Expiry Date")} name="expiryDate" type="date" InputLabelProps={{ shrink: true }} fullWidth value={item.expiryDate} onChange={e => handlePassportsChange(idx, e)} required />
+                  <TextField
+                    label={t("expiryDate", "Expiry Date")}
+                    name="expiryDate"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    value={item.expiryDate}
+                    onChange={e => handlePassportsChange(idx, e)}
+                    required
+                  />
                 </Grid>
                 <Grid item xs={2}>
-                  <TextField label={t("country", "Country")} name="country" fullWidth value={item.country} onChange={e => handlePassportsChange(idx, e)} required />
+                  <TextField
+                    label={t("country", "Country")}
+                    name="country"
+                    fullWidth
+                    value={item.country}
+                    onChange={e => handlePassportsChange(idx, e)}
+                    required
+                  />
                 </Grid>
                 <Grid item xs={1} alignSelf="center">
                   <IconButton color="error" onClick={() => removePassport(idx)} disabled={form.passportsGranted.length === 1 || submitting}>
@@ -297,13 +502,33 @@ export default function ConsularFileWizard() {
             {form.repatriations.map((item, idx) => (
               <React.Fragment key={`repatriation-${idx}`}>
                 <Grid item xs={4}>
-                  <TextField label={t("date", "Date")} name="date" type="date" InputLabelProps={{ shrink: true }} fullWidth value={item.date} onChange={e => handleRepatriationsChange(idx, e)} />
+                  <TextField
+                    label={t("date", "Date")}
+                    name="date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                    value={item.date}
+                    onChange={e => handleRepatriationsChange(idx, e)}
+                  />
                 </Grid>
                 <Grid item xs={4}>
-                  <TextField label={t("conditions", "Conditions")} name="conditions" fullWidth value={item.conditions} onChange={e => handleRepatriationsChange(idx, e)} />
+                  <TextField
+                    label={t("conditions", "Conditions")}
+                    name="conditions"
+                    fullWidth
+                    value={item.conditions}
+                    onChange={e => handleRepatriationsChange(idx, e)}
+                  />
                 </Grid>
                 <Grid item xs={3}>
-                  <TextField label={t("stateCharges", "State Charges")} name="stateCharges" fullWidth value={item.stateCharges} onChange={e => handleRepatriationsChange(idx, e)} />
+                  <TextField
+                    label={t("stateCharges", "State Charges")}
+                    name="stateCharges"
+                    fullWidth
+                    value={item.stateCharges}
+                    onChange={e => handleRepatriationsChange(idx, e)}
+                  />
                 </Grid>
                 <Grid item xs={1} alignSelf="center">
                   <IconButton color="error" onClick={() => removeRepatriation(idx)} disabled={form.repatriations.length === 1 || submitting}>
@@ -324,10 +549,24 @@ export default function ConsularFileWizard() {
           <Grid container spacing={2}>
             <Grid item xs={12}><Typography variant="h6">{steps[3]}</Typography></Grid>
             <Grid item xs={12}>
-              <TextField label={t("civilNotarialActs", "Civil/Notarial Acts")} name="civilNotarialActs" fullWidth multiline minRows={3} value={form.civilNotarialActs} onChange={handleChange} />
+              <TextField
+                label={t("civilNotarialActs", "Civil/Notarial Acts")}
+                name="civilNotarialActs"
+                fullWidth
+                multiline
+                minRows={3}
+                value={form.civilNotarialActs}
+                onChange={handleChange}
+              />
             </Grid>
             <Grid item xs={12}>
-              <TextField label={t("applicantSignature", "Applicant Signature")} name="applicantSignature" fullWidth value={form.applicantSignature} onChange={handleChange} />
+              <TextField
+                label={t("applicantSignature", "Applicant Signature")}
+                name="applicantSignature"
+                fullWidth
+                value={form.applicantSignature}
+                onChange={handleChange}
+              />
             </Grid>
             <Grid item xs={12}><Divider sx={{ my: 2 }} /></Grid>
             <Grid item xs={12}>

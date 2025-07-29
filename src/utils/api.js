@@ -14,4 +14,10 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
+// Add this helper:
+export async function fetchRegistrationByFileNumber(fileNumber) {
+  const res = await API.get(`/registration/by-file-number/${fileNumber}`);
+  return res.data;
+}
+
 export default API;
