@@ -59,7 +59,7 @@ export default function RegistrationFormPrintable({ form }) {
       {/* HEADER */}
       <div style={{ textAlign: "center", marginTop: 25, marginBottom: 6 }}>
         <img
-          src="/emblem-mozambique.png"
+          src="/emblem-mozambique.jpeg"
           alt="Emblema"
           style={{
             width: 80,
@@ -107,8 +107,8 @@ export default function RegistrationFormPrintable({ form }) {
           </div>
         </div>
         <div style={{
-          width: 68,
-          height: 68,
+          width: 136,
+          height: 136,
           border: "2px solid #000",
           background: "#fff",
           display: "flex",
