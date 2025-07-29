@@ -100,6 +100,8 @@ export default function RegistrationFormPrintable({ form }) {
             fontSize: "1.18em",
             marginBottom: 6,
             marginTop: 2,
+            paddingLeft: 24,
+            paddingRight: 32,
             textTransform: "uppercase",
             fontFamily: "Times New Roman, Times, serif"
           }}>
@@ -107,8 +109,8 @@ export default function RegistrationFormPrintable({ form }) {
           </div>
         </div>
         <div style={{
-          width: 136,
-          height: 136,
+          width: 68,
+          height: 68,
           border: "2px solid #000",
           background: "#fff",
           display: "flex",
