@@ -29,7 +29,7 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
-  gap: 48px; /* Space between text and photo */
+  gap: 48px;
   margin-bottom: 12px;
 }
 
@@ -37,7 +37,7 @@
 .titlesBlock {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Right-align so titles are close to photo */
+  align-items: flex-end;
   justify-content: center;
   flex: 1 1 auto;
   min-width: 340px;
@@ -148,6 +148,8 @@
   background: #fff;
 }
 
+/* Hide instructions and buttons on print */
+.no-print { display: block; }
 @media print {
   .printableForm {
     background: #fff !important;

@@ -65,7 +65,6 @@ const initialForm = {
     cellPhone: "",
   },
   familyMozambique: [{ name: "", relationship: "", residence: "" }],
-  // Updated structure for familyUnder15 to support age type
   familyUnder15: [{ name: "", relationship: "", age: "", ageType: "years" }],
   consularCardNumber: "",
   consularCardIssueDate: "",
@@ -87,6 +86,7 @@ const steps = [
   "Repatriations",
   "Civil/Notary Acts",
   "Observations & Attachments",
+  "Confirmation"
 ];
 
 export default function RegistrationWizard() {
@@ -994,6 +994,8 @@ export default function RegistrationWizard() {
             </Grid>
           </Grid>
         );
+      case 10:
+        return <ConfirmationPage form={form} />;
       default:
         return null;
     }
@@ -1033,7 +1035,9 @@ export default function RegistrationWizard() {
         </Stepper>
         <Divider sx={{ my: 2 }} />
         <form onSubmit={handleSubmit} autoComplete="off">
-          <Box sx={{ pt: 2 }}>{getStepContent(activeStep)}</Box>
+          <Box sx={{ pt: 2 }}>
+            {getStepContent(activeStep)}
+          </Box>
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
@@ -1044,54 +1048,53 @@ export default function RegistrationWizard() {
               {message}
             </Alert>
           )}
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 2,
-            }}
-          >
-            <Button
-              disabled={activeStep === 0 || loading}
-              onClick={handleBack}
-              startIcon={<ArrowBackIosNewIcon />}
-              variant="text"
-              sx={{ textTransform: "none", minWidth: 100 }}
+          {/* Show navigation and review/submit buttons only if not on confirmation page */}
+          {activeStep < steps.length - 1 && (
+            <Box
+              sx={{
+                mt: 3,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 2,
+              }}
             >
-              {t("back") || "Back"}
-            </Button>
-            {activeStep < steps.length - 1 ? (
               <Button
-                variant="contained"
-                onClick={handleNext}
-                endIcon={<ArrowForwardIosIcon />}
-                disabled={loading}
-                sx={{ minWidth: 120 }}
+                disabled={activeStep === 0 || loading}
+                onClick={handleBack}
+                startIcon={<ArrowBackIosNewIcon />}
+                variant="text"
+                sx={{ textTransform: "none", minWidth: 100 }}
               >
-                {t("next") || "Next"}
+                {t("back") || "Back"}
               </Button>
-            ) : (
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                endIcon={
-                  loading ? (
-                    <CircularProgress size={18} color="inherit" />
-                  ) : (
-                    <SendIcon />
-                  )
-                }
-                disabled={loading}
-                sx={{ minWidth: 120 }}
-              >
-                {loading ? (t("submitting") || "Submitting...") : t("submit") || "Submit"}
-              </Button>
-            )}
-          </Box>
+              {activeStep < steps.length - 2 ? (
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  endIcon={<ArrowForwardIosIcon />}
+                  disabled={loading}
+                  sx={{ minWidth: 120 }}
+                  type="button"
+                >
+                  {t("next") || "Next"}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ArrowForwardIosIcon />}
+                  disabled={loading}
+                  sx={{ minWidth: 120 }}
+                  type="button"
+                  onClick={handleNext}
+                >
+                  {t("review") || "Review"}
+                </Button>
+              )}
+            </Box>
+          )}
         </form>
         <Snackbar
           open={snackbarOpen}
