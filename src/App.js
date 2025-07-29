@@ -9,8 +9,8 @@ import { setToken } from "./utils/auth";
 import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
 import ConsularFileForm from "./components/ConsularFileForm/ConsularFileForm";
 import RegistrationsTable from "./components/RegistrationForm/RegistrationsTable";
-import ConsularFileTable from "./components/ConsularFileForm/ConsularFileTable"; //
-
+import ConsularFileTable from "./components/ConsularFileForm/ConsularFileTable";
+import ConsularFileView from "./components/ConsularFileForm/ConsularFileView"; // NEW
 
 // Helper component to handle Google Login Redirect
 function GoogleRedirectHandler({ children }) {
@@ -42,8 +42,8 @@ function App() {
           <Route path="/registration-form" element={<RegistrationForm />} />
           <Route path="/consular-file-form" element={<ConsularFileForm />} />
           <Route path="/registrations" element={<RegistrationsTable />} />
-          <Route path="/consular-files" element={<ConsularFileTable />} /> {/* <-- Add this route */}
-
+          <Route path="/consular-files" element={<ConsularFileTable />} />
+          <Route path="/consular-file/:id" element={<ConsularFileView />} /> {/* NEW */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </GoogleRedirectHandler>
