@@ -1,459 +1,431 @@
 import React from "react";
 
-// If you use CSS modules, import as below (but remember, print preview may not have access!)
-// import styles from "./RegistrationFormPrintable.module.css";
-
-// We'll use inline styles for the photo section to guarantee print correctness
+// Helper for dotted lines
+const Dots = ({ length = 30 }) => (
+  <span style={{ letterSpacing: "2px", fontFamily: "monospace" }}>
+    {".".repeat(length)}
+  </span>
+);
 
 export default function RegistrationFormPrintable({ form }) {
-  // Helper to show value or a dash
-  const show = (val) => val ? val : "—";
+  // Helper for field display (blank if missing)
+  const show = (val) => val ? val : <Dots length={20} />;
+
+  // Helper for day/month/year splitting
+  const dateParts = (dateStr) => {
+    if (!dateStr) return [<Dots length={8}/>, <Dots length={8}/>, <Dots length={8}/>];
+    const d = new Date(dateStr);
+    if (isNaN(d)) return [<Dots length={8}/>, <Dots length={8}/>, <Dots length={8}/>];
+    return [
+      String(d.getDate()).padStart(2, "0"),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      d.getFullYear()
+    ];
+  };
+
+  // Passport photo logic
+  let passPhoto = null;
+  if (form?.passportPhoto) {
+    passPhoto = (
+      <img
+        src={
+          typeof form.passportPhoto === "string"
+            ? form.passportPhoto
+            : URL.createObjectURL(form.passportPhoto)
+        }
+        alt="Passaporte"
+        style={{
+          maxWidth: "100%",
+          maxHeight: "100%",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          borderRadius: 2,
+          display: "block",
+          background: "#fff"
+        }}
+      />
+    );
+  }
+
+  // Styles
+  const tableStyle = { width: "100%", borderCollapse: "collapse", marginBottom: 12 };
+  const tdStyle = { border: "1.5px solid #222", padding: "3px 6px", fontSize: "1em" };
 
   return (
-    <div className="printableForm" style={{
+    <div style={{
       background: "#fff",
-      padding: 32,
-      fontFamily: "Arial, serif",
-      color: "#111",
-      maxWidth: 900,
+      padding: 0,
+      fontFamily: "Times New Roman, Times, serif",
+      color: "#000",
+      maxWidth: 750,
+      minHeight: 1100,
       margin: "0 auto",
       boxSizing: "border-box"
     }}>
-      {/* Logo Row */}
-      <div className="logoRow" style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 4
-      }}>
+      {/* HEADER */}
+      <div style={{ textAlign: "center", marginTop: 25, marginBottom: 6 }}>
         <img
           src="/logo-emblem.png"
-          alt="Emblem"
-          className="logoImg"
+          alt="Emblema"
           style={{
-            width: 100,
-            height: 100,
+            width: 80,
+            height: 80,
             objectFit: "contain",
-            display: "block",
-            margin: "0 auto"
+            margin: "0 auto",
+            display: "block"
           }}
         />
       </div>
-
-      {/* Header Row: Titles and Photo */}
-      <div className="headerRowFlex" style={{
+      <div style={{
+        fontWeight: "bold",
+        textAlign: "center",
+        fontSize: "1.25em",
+        letterSpacing: 1,
+        lineHeight: 1.25
+      }}>
+        REPÚBLICA DE MOÇAMBIQUE <br />
+        CONSULADO DA REPÚBLICA DE <br />
+        MOÇAMBIQUE EM MOMBASA
+      </div>
+      {/* Row: Title and photo box */}
+      <div style={{
         display: "flex",
         flexDirection: "row",
         alignItems: "flex-start",
         justifyContent: "center",
-        gap: 48,
-        marginBottom: 12
-      }}>
-        <div className="titlesBlock" style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          justifyContent: "center",
-          flex: "1 1 auto",
-          minWidth: 340
-        }}>
-          <h2 className="headerLine" style={{
-            fontWeight: "bold",
-            fontSize: "1.16em",
-            textTransform: "uppercase",
-            letterSpacing: "0.6px",
-            textAlign: "left",
-            lineHeight: 1.15,
-            margin: 0
-          }}>
-            República de Moçambique
-          </h2>
-          <h3 className="headerLine" style={{
-            fontWeight: "bold",
-            fontSize: "1.16em",
-            textTransform: "uppercase",
-            letterSpacing: "0.6px",
-            textAlign: "left",
-            lineHeight: 1.15,
-            margin: 0
-          }}>
-            Embaixada em Nairobi
-          </h3>
-          <h4 className="headerLine" style={{
-            fontWeight: "bold",
-            fontSize: "1.16em",
-            textTransform: "uppercase",
-            letterSpacing: "0.6px",
-            textAlign: "left",
-            lineHeight: 1.15,
-            margin: 0
-          }}>
-            Ficha de Inscrição Consular
-          </h4>
-        </div>
-        {/* Passport Photo Box with inline styles for print safety */}
-        <div
-          className="photoBox"
-          style={{
-            width: 100,
-            height: 100,
-            border: "2px solid #222",
-            marginTop: 8,
-            background: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-            position: "relative"
-          }}>
-          {form?.passportPhoto ? (
-            <img
-              src={
-                typeof form.passportPhoto === "string"
-                  ? form.passportPhoto
-                  : URL.createObjectURL(form.passportPhoto)
-              }
-              alt="Foto do Passaporte"
-              className="photoPreview"
-              crossOrigin="anonymous"
-              style={{
-                maxWidth: 96,
-                maxHeight: 96,
-                width: "auto",
-                height: "auto",
-                objectFit: "cover",
-                borderRadius: 4,
-                display: "block",
-                background: "#fff"
-              }}
-            />
-          ) : null}
-        </div>
-      </div>
-
-      {/* Consular Registration Section */}
-      <div className="metaSection" style={{
-        textAlign: "left",
-        marginTop: 12,
+        marginTop: 14,
         marginBottom: 10
       }}>
+        <div style={{ flex: "1 1 65%", textAlign: "center" }}>
+          <div style={{
+            fontWeight: "bold",
+            fontSize: "1.15em",
+            marginBottom: 6,
+            marginTop: 2,
+            textTransform: "uppercase"
+          }}>
+            INSCRIÇÃO CONSULAR
+          </div>
+        </div>
+        <div style={{
+          flex: "0 0 auto",
+          width: 100,
+          height: 100,
+          border: "2px solid #111",
+          marginLeft: 30,
+          background: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          position: "relative"
+        }}>
+          {passPhoto}
+        </div>
+      </div>
+      {/* Consular info */}
+      <div style={{margin: "0 0 10px 0", fontSize: "1.01em"}}>
         <div>
-          <b>Nº de Inscrição Consular:</b> {show(form.fileNumber)}
+          <b>INSC. CONSULAR Nº</b> <Dots length={30} /> 
         </div>
         <div>
-          <b>Emitido em:</b> {show(form.issuedOn)} &nbsp; <b>Validade:</b> {show(form.validity)}
+          <b>DATA DE EMISSÃO</b> <Dots length={18} /> <b>VALIDADE</b> <Dots length={18} />
         </div>
       </div>
 
-      {/* Personal Information Table */}
-      <div className="sectionTitlePrint" style={{
-        fontWeight: "bold",
-        margin: "16px 0 6px 0",
-        textTransform: "uppercase",
-        fontSize: "1.12em",
-        letterSpacing: "0.5px",
-        textAlign: "left"
+      {/* Personal Information */}
+      <div style={{
+        border: "1.5px solid #222",
+        marginBottom: 10,
+        padding: "2px 10px 2px 10px"
       }}>
-        Dados Pessoais
+        <div>
+          Nome completo <Dots length={72} />
+        </div>
+        <div>
+          País e local de nascimento <Dots length={54} />
+        </div>
+        <div>
+          Data de Nascimento <Dots length={6}/> de <Dots length={6}/> de <Dots length={8}/> &nbsp; Estado Civil <Dots length={24}/>
+        </div>
+        <div>
+          Nome do Pai <Dots length={58}/>
+        </div>
+        <div>
+          Nome da Mãe <Dots length={58}/>
+        </div>
+        <div>
+          Habilitações Literárias <Dots length={16}/> profissão <Dots length={23}/> Local de trabalho <Dots length={24}/>
+        </div>
+        <div>
+          Telefone <Dots length={16}/> (Estudante, local de ensino) <Dots length={32}/>
+        </div>
+        <div>
+          Portador de passaporte/C. Emergencia/BI/Cédula pessoal Nº <Dots length={30}/> Emitido em <Dots length={16}/>
+        </div>
+        <div>
+          Aos <Dots length={6}/> de <Dots length={6}/> válido até <Dots length={6}/> de <Dots length={6}/> de <Dots length={8}/> Última residência em Moçambique <Dots length={24}/>
+        </div>
+        <div>
+          Endereço da residência em Quénia <Dots length={28}/> Localidade <Dots length={24}/>
+        </div>
+        <div>
+          Distrito <Dots length={18}/> Telefone Celular <Dots length={26}/>
+        </div>
       </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <tbody>
-          <tr>
-            <th>Nome Completo</th>
-            <td>{show(form.fullName)}</td>
-            <th>Data de Nascimento</th>
-            <td>{show(form.birthDate)}</td>
-          </tr>
-          <tr>
-            <th>Naturalidade</th>
-            <td>{show(form.countryPlaceOfBirth)}</td>
-            <th>Estado Civil</th>
-            <td>{show(form.maritalStatus)}</td>
-          </tr>
-          <tr>
-            <th>Nome do Pai</th>
-            <td>{show(form.fatherName)}</td>
-            <th>Nome da Mãe</th>
-            <td>{show(form.motherName)}</td>
-          </tr>
-          <tr>
-            <th>Escolaridade</th>
-            <td>{show(form.education)}</td>
-            <th>Profissão</th>
-            <td>{show(form.profession)}</td>
-          </tr>
-          <tr>
-            <th>Local de Trabalho/Escola</th>
-            <td>{show(form.workplaceOrSchool)}</td>
-            <th>Telefone</th>
-            <td>{show(form.phone)}</td>
-          </tr>
-          <tr>
-            <th>Telemóvel</th>
-            <td>{show(form.cellPhone)}</td>
-            <th>Tipo de Documento</th>
-            <td>{show(form.passportOrIdType)}</td>
-          </tr>
-          <tr>
-            <th>Nº do Documento</th>
-            <td>{show(form.passportOrIdNumber)}</td>
-            <th>Emissão</th>
-            <td>{show(form.passportIssuedAt)}</td>
-          </tr>
-          <tr>
-            <th>Válido Até</th>
-            <td>{show(form.passportValidUntil)}</td>
-            <th>Residência Quénia</th>
-            <td>{show(form.residenceKenya)}</td>
-          </tr>
-          <tr>
-            <th>Localidade</th>
-            <td>{show(form.location)}</td>
-            <th>Residência Moçambique</th>
-            <td>{show(form.residenceMozambique)}</td>
-          </tr>
-          <tr>
-            <th>Distrito</th>
-            <td>{show(form.district)}</td>
-            <th>Documentos Apresentados</th>
-            <td>{show(form.documentsPresented)}</td>
-          </tr>
-          <tr>
-            <th>Residência Atual</th>
-            <td colSpan={3}>{show(form.currentResidence)}</td>
-          </tr>
-        </tbody>
-      </table>
 
-      {/* Spouse Information */}
-      <div className="sectionTitlePrint" style={{
+      {/* Spouse */}
+      <div style={{
+        border: "1.5px solid #222",
+        marginBottom: 10,
+        padding: "2px 10px 2px 10px",
         fontWeight: "bold",
-        margin: "16px 0 6px 0",
-        textTransform: "uppercase",
-        fontSize: "1.12em",
-        letterSpacing: "0.5px",
-        textAlign: "left"
+        textAlign: "center"
       }}>
-        Dados do Cônjuge
+        DADOS DE CÔNJUGE
       </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <tbody>
-          <tr>
-            <th>Nome Completo</th>
-            <td>{show(form.spouse.fullName)}</td>
-            <th>Nacionalidade</th>
-            <td>{show(form.spouse.nationality)}</td>
-          </tr>
-          <tr>
-            <th>Documento de Identificação</th>
-            <td>{show(form.spouse.idDocument)}</td>
-            <th>Profissão</th>
-            <td>{show(form.spouse.profession)}</td>
-          </tr>
-          <tr>
-            <th>Local de Trabalho</th>
-            <td>{show(form.spouse.workplace)}</td>
-            <th>Telemóvel</th>
-            <td>{show(form.spouse.cellPhone)}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div style={{
+        border: "1.5px solid #222",
+        marginBottom: 10,
+        padding: "2px 10px 2px 10px"
+      }}>
+        <div>
+          Nome completo <Dots length={60}/>
+        </div>
+        <div>
+          Nacionalidade <Dots length={16}/> Documento de identificação <Dots length={36}/>
+        </div>
+        <div>
+          Profissão <Dots length={24}/> Local de trabalho <Dots length={26}/> Celular Nº <Dots length={18}/>
+        </div>
+      </div>
 
       {/* Family in Mozambique */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Família em Moçambique
-      </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Parentesco</th>
-            <th>Residência</th>
-          </tr>
-        </thead>
-        <tbody>
-          {form.familyMozambique && form.familyMozambique.length > 0 ? form.familyMozambique.map((f, i) => (
-            <tr key={i}>
-              <td>{show(f.name)}</td>
-              <td>{show(f.relationship)}</td>
-              <td>{show(f.residence)}</td>
-            </tr>
-          )) : (
-            <tr>
-              <td colSpan={3}>—</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      {/* Family Under 15 (Kenya) */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Família Menor de 15 anos no Quénia
-      </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Parentesco</th>
-            <th>Idade</th>
-            <th>Tipo de Idade</th>
-          </tr>
-        </thead>
-        <tbody>
-          {form.familyUnder15 && form.familyUnder15.length > 0 ? form.familyUnder15.map((f, i) => (
-            <tr key={i}>
-              <td>{show(f.name)}</td>
-              <td>{show(f.relationship)}</td>
-              <td>{show(f.age)}</td>
-              <td>{show(f.ageType)}</td>
-            </tr>
-          )) : (
-            <tr>
-              <td colSpan={4}>—</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      {/* Consular Card */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Cartão Consular
-      </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <tbody>
-          <tr>
-            <th>Número do Cartão</th>
-            <td>{show(form.consularCardNumber)}</td>
-            <th>Data de Emissão</th>
-            <td>{show(form.consularCardIssueDate)}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      {/* Passports / IDs */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Passaportes / Documentos de Identidade
-      </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <thead>
-          <tr>
-            <th>Número</th>
-            <th>Data de Emissão</th>
-            <th>Validade</th>
-            <th>País</th>
-          </tr>
-        </thead>
-        <tbody>
-          {form.passports && form.passports.length > 0 ? form.passports.map((p, i) => (
-            <tr key={i}>
-              <td>{show(p.number)}</td>
-              <td>{show(p.issueDate)}</td>
-              <td>{show(p.expiryDate)}</td>
-              <td>{show(p.country)}</td>
-            </tr>
-          )) : (
-            <tr>
-              <td colSpan={4}>—</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      {/* Repatriations */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Repatriamentos
-      </div>
-      <table className="table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 18 }}>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Condições</th>
-            <th>Encargos</th>
-          </tr>
-        </thead>
-        <tbody>
-          {form.repatriations && form.repatriations.length > 0 ? form.repatriations.map((r, i) => (
-            <tr key={i}>
-              <td>{show(r.date)}</td>
-              <td>{show(r.conditions)}</td>
-              <td>{show(r.charges)}</td>
-            </tr>
-          )) : (
-            <tr>
-              <td colSpan={3}>—</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      {/* Civil/Notary Acts */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Atos Civis / Notariais
-      </div>
       <div style={{
         border: "1.5px solid #222",
-        padding: 8,
-        minHeight: 32,
-        fontSize: "1em",
-        textAlign: "left",
-        background: "#fff",
-        marginBottom: 18
+        marginBottom: 10,
+        padding: 0
       }}>
-        {show(form.civilActs)}
-      </div>
-
-      {/* Observations & Attachments */}
-      <div className="sectionTitlePrint" style={{ fontWeight: "bold", margin: "16px 0 6px 0", textTransform: "uppercase", fontSize: "1.12em", letterSpacing: "0.5px", textAlign: "left" }}>
-        Observações & Anexos
-      </div>
-      <div style={{
-        border: "1.5px solid #222",
-        padding: 8,
-        minHeight: 32,
-        fontSize: "1em",
-        textAlign: "left",
-        background: "#fff",
-        marginBottom: 18
-      }}>
-        {show(form.observations)}
-      </div>
-
-      {/* Images Row (if you have formImages logic) */}
-      {form.formImages && form.formImages.length > 0 && (
-        <div className="imagesRow" style={{
-          display: "flex",
-          gap: 18,
-          flexWrap: "wrap",
-          marginBottom: 16
+        <div style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          padding: "2px 0 2px 0"
         }}>
-          {form.formImages.map((img, idx) => (
-            <img
-              key={idx}
-              src={typeof img === "string" ? img : URL.createObjectURL(img)}
-              alt={`Attachment ${idx + 1}`}
-              className="uploadedImg"
-              style={{
-                maxWidth: 160,
-                maxHeight: 140,
-                border: "1.5px solid #b10056",
-                borderRadius: 4,
-                marginRight: 8,
-                background: "#fff"
-              }}
-            />
+          FAMILIARES EM MOÇAMBIQUE
+        </div>
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={tdStyle}>Nomes</th>
+              <th style={tdStyle}>Grau de parentesco</th>
+              <th style={tdStyle}>Residência / contacto</th>
+            </tr>
+          </thead>
+          <tbody>
+            {form.familyMozambique && form.familyMozambique.length > 0
+              ? form.familyMozambique.map((f, i) => (
+                  <tr key={i}>
+                    <td style={tdStyle}>{show(f.name)}</td>
+                    <td style={tdStyle}>{show(f.relationship)}</td>
+                    <td style={tdStyle}>{show(f.residence)}</td>
+                  </tr>
+                ))
+              : [...Array(3)].map((_, i) => (
+                  <tr key={i}>
+                    <td style={tdStyle}><Dots length={18}/></td>
+                    <td style={tdStyle}><Dots length={18}/></td>
+                    <td style={tdStyle}><Dots length={24}/></td>
+                  </tr>
+                ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Next Page: Family Under 15 */}
+      <div style={{
+        pageBreakBefore: "always",
+        marginTop: 10
+      }}>
+        <div style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          marginBottom: 2
+        }}>
+          PESSOAL DA FAMÍLIA A SEU CARGO
+        </div>
+        <div style={{
+          textAlign: "center",
+          fontSize: "0.96em",
+          marginBottom: 5
+        }}>
+          (Menores de 15 anos)
+        </div>
+        <div style={{
+          border: "1.5px solid #222",
+          marginBottom: 10,
+          padding: 0
+        }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={tdStyle}>Nomes</th>
+                <th style={tdStyle}>Grau de parentesco</th>
+                <th style={tdStyle}>Idade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {form.familyUnder15 && form.familyUnder15.length > 0
+                ? form.familyUnder15.map((f, i) => (
+                    <tr key={i}>
+                      <td style={tdStyle}>{show(f.name)}</td>
+                      <td style={tdStyle}>{show(f.relationship)}</td>
+                      <td style={tdStyle}>{show(f.age)}</td>
+                    </tr>
+                  ))
+                : [...Array(2)].map((_, i) => (
+                    <tr key={i}>
+                      <td style={tdStyle}><Dots length={18}/></td>
+                      <td style={tdStyle}><Dots length={18}/></td>
+                      <td style={tdStyle}><Dots length={10}/></td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Consular Card */}
+        <div style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          margin: "7px 0 1px 0"
+        }}>
+          CARTÃO DE INSCRIÇÃO CONSULAR CONCEDIDOS
+        </div>
+        <div style={{
+          border: "1.5px solid #222",
+          marginBottom: 10,
+          padding: "2px 10px 2px 10px"
+        }}>
+          Número de cartão <Dots length={32}/> Data de Emissão <Dots length={16}/>
+        </div>
+
+        {/* Passports */}
+        <div style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          margin: "7px 0 1px 0"
+        }}>
+          BILHETE DE IDENTIDADE/ PASSAPORTES CONCEDIDOS
+        </div>
+        <div style={{
+          border: "1.5px solid #222",
+          marginBottom: 10,
+          padding: 0
+        }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={tdStyle}>Número</th>
+                <th style={tdStyle}>Data</th>
+                <th style={tdStyle}>Prazo de Validade</th>
+                <th style={tdStyle}>Países</th>
+              </tr>
+            </thead>
+            <tbody>
+              {form.passports && form.passports.length > 0
+                ? form.passports.map((p, i) => (
+                    <tr key={i}>
+                      <td style={tdStyle}>{show(p.number)}</td>
+                      <td style={tdStyle}>{show(p.issueDate)}</td>
+                      <td style={tdStyle}>{show(p.expiryDate)}</td>
+                      <td style={tdStyle}>{show(p.country)}</td>
+                    </tr>
+                  ))
+                : [...Array(2)].map((_, i) => (
+                    <tr key={i}>
+                      <td style={tdStyle}><Dots length={12}/></td>
+                      <td style={tdStyle}><Dots length={12}/></td>
+                      <td style={tdStyle}><Dots length={14}/></td>
+                      <td style={tdStyle}><Dots length={14}/></td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Repatriations */}
+        <div style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          margin: "7px 0 1px 0"
+        }}>
+          REPATRIAÇÕES
+        </div>
+        <div style={{
+          border: "1.5px solid #222",
+          marginBottom: 10,
+          padding: 0
+        }}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={tdStyle}>Data</th>
+                <th style={tdStyle}>Condições</th>
+                <th style={tdStyle}>Encargos para o Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {form.repatriations && form.repatriations.length > 0
+                ? form.repatriations.map((r, i) => (
+                    <tr key={i}>
+                      <td style={tdStyle}>{show(r.date)}</td>
+                      <td style={tdStyle}>{show(r.conditions)}</td>
+                      <td style={tdStyle}>{show(r.charges)}</td>
+                    </tr>
+                  ))
+                : [...Array(2)].map((_, i) => (
+                    <tr key={i}>
+                      <td style={tdStyle}><Dots length={12}/></td>
+                      <td style={tdStyle}><Dots length={20}/></td>
+                      <td style={tdStyle}><Dots length={18}/></td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Civil/Notary Acts */}
+        <div style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          margin: "7px 0 1px 0"
+        }}>
+          ACTOS DE REGISTO CIVIL E NOTARIADO
+        </div>
+        <div style={{
+          border: "1.5px solid #222",
+          minHeight: 70,
+          marginBottom: 10,
+          padding: "6px 8px"
+        }}>
+          {[...Array(4)].map((_, i) => (
+            <div key={i}><Dots length={110}/></div>
           ))}
         </div>
-      )}
 
-      {/* Footer */}
-      <div className="footerRow" style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginTop: 32,
-        fontSize: "1em"
-      }}>
-        <span>Data: {new Date().toLocaleDateString()}</span>
-        <span>Assinatura: __________________________</span>
+        {/* Footer: Place, Date, Observations */}
+        <div style={{
+          margin: "26px 0 0 0",
+          fontSize: "1em"
+        }}>
+          <span>
+            Mombasa, aos <Dots length={10}/> de <Dots length={20}/> de 20<Dots length={2}/>
+          </span>
+        </div>
+        <div style={{marginTop: 6}}>
+          Observações <Dots length={70}/>
+        </div>
       </div>
     </div>
   );
