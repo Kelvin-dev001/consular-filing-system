@@ -998,7 +998,7 @@ export default function RegistrationWizard() {
           </Grid>
         );
       case 10:
-        return <ConfirmationPage form={form} />;
+        return <ConfirmationPage form={form} onBack={handleBack} />;
       default:
         return null;
     }

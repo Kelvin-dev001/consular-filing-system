@@ -5,7 +5,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
-export default function ConfirmationPage({ form }) {
+export default function ConfirmationPage({ form, onBack }) {
   const printRef = useRef();
   const navigate = useNavigate();
 
@@ -239,7 +239,7 @@ export default function ConfirmationPage({ form }) {
         <Button
           variant="outlined"
           color="primary"
-          onClick={handleBack}
+          onClick={onBack}
           sx={{ px: 4 }}
           startIcon={<ArrowBackIcon />}
         >
