@@ -17,11 +17,15 @@ import {
   DialogActions,
   CircularProgress,
   Snackbar,
-  Alert
+  Alert,
+  Autocomplete,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import API, { fetchRegistrationByFileNumber } from "../../utils/api";
+import API, {
+  fetchRegistrationByFileNumber,
+  fetchAllRegistrationFileNumbers,
+} from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ConsularFileWizard.css";
@@ -52,11 +56,16 @@ export default function ConsularFileWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [lookupStatus, setLookupStatus] = useState({ loading: false, found: false, error: "" });
+  const [fileNumberOptions, setFileNumberOptions] = useState([]);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Clean state when wizard is reopened for a new record
+  // Fetch file number options for dropdown on mount
   useEffect(() => {
+    fetchAllRegistrationFileNumbers()
+      .then(setFileNumberOptions)
+      .catch(() => setFileNumberOptions([]));
+    // Reset wizard state on mount/new session
     setForm(initialForm);
     setActiveStep(0);
     setError("");
@@ -165,7 +174,7 @@ export default function ConsularFileWizard() {
             Array.isArray(reg.passports) && reg.passports.length > 0
               ? reg.passports.map(p => ({
                   number: p.number || "",
-                  issueDate: p.issueDate ? p.issueDate.slice(0, 10) : "", // ensure yyyy-mm-dd
+                  issueDate: p.issueDate ? p.issueDate.slice(0, 10) : "",
                   expiryDate: p.expiryDate ? p.expiryDate.slice(0, 10) : "",
                   country: p.country || ""
                 }))
@@ -229,7 +238,7 @@ export default function ConsularFileWizard() {
     return "";
   }
 
-  // NAVIGATION (fix: do not reset on mount, only on submit)
+  // NAVIGATION (do not reset on every render, only on submit)
   const handleNext = () => {
     setError("");
     const err = validateStep(form, activeStep);
@@ -323,23 +332,49 @@ export default function ConsularFileWizard() {
           <Grid container spacing={2}>
             <Grid item xs={12}><Typography variant="h6">{steps[0]}</Typography></Grid>
             <Grid item xs={6}>
-              <TextField
-                label={t("fileNumber", "File Number")}
-                name="fileNumber"
-                fullWidth
-                value={form.fileNumber}
-                onChange={handleFileNumberChange}
-                required
-                helperText={
-                  lookupStatus.loading
-                    ? "Looking up registration..."
-                    : lookupStatus.error
-                    ? lookupStatus.error
-                    : lookupStatus.found
-                    ? "Registration found and data loaded."
-                    : ""
+              <Autocomplete
+                freeSolo
+                options={fileNumberOptions.map(opt => ({
+                  label: `${opt.fileNumber} - ${opt.fullName}`,
+                  value: opt.fileNumber
+                }))}
+                getOptionLabel={option =>
+                  typeof option === "string" ? option : option.label
                 }
-                error={!!lookupStatus.error}
+                value={
+                  fileNumberOptions.find(opt => opt.value === form.fileNumber) ||
+                  (form.fileNumber
+                    ? { label: form.fileNumber, value: form.fileNumber }
+                    : null)
+                }
+                onChange={(_, newValue) => {
+                  // User selected from dropdown
+                  const newFileNumber = newValue?.value || "";
+                  handleFileNumberChange({ target: { value: newFileNumber } });
+                }}
+                onInputChange={(_, newInputValue, reason) => {
+                  // User typed manually
+                  if (reason === "input") {
+                    handleFileNumberChange({ target: { value: newInputValue } });
+                  }
+                }}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    label={t("fileNumber", "File Number")}
+                    required
+                    helperText={
+                      lookupStatus.loading
+                        ? "Looking up registration..."
+                        : lookupStatus.error
+                        ? lookupStatus.error
+                        : lookupStatus.found
+                        ? "Registration found and data loaded."
+                        : ""
+                    }
+                    error={!!lookupStatus.error}
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={6}>
