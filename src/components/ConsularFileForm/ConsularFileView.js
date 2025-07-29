@@ -1,192 +1,218 @@
-import React, { useEffect, useState } from "react";
-import {
-  DataGrid,
-  GridToolbar,
-  GridActionsCellItem,
-} from "@mui/x-data-grid";
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Paper,
-  Box,
   Typography,
-  Tooltip,
-  TextField,
+  Box,
+  Divider,
+  Button,
+  Grid,
+  CircularProgress,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useNavigate } from "react-router-dom";
-import EditConsularFileDialog from "./EditConsularFileDialog";
+import PrintIcon from "@mui/icons-material/Print";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import API from "../../utils/api";
 
-export default function ConsularFileTable() {
-  const [records, setRecords] = useState([]);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [rowCount, setRowCount] = useState(0);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  // For Edit dialog
-  const [editCons, setEditCons] = useState(null);
-
+export default function ConsularFileView() {
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // Fetch data
-  const fetchRecords = () => {
-    setLoading(true);
-    API
-      .get("/consular-files", {
-        params: {
-          page: page + 1,
-          limit: pageSize,
-          search: search,
-        },
-      })
-      .then((res) => {
-        setRecords(res.data.records);
-        setRowCount(res.data.total);
-      })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-      })
-      .finally(() => setLoading(false));
-  };
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const printRef = useRef();
 
   useEffect(() => {
-    fetchRecords();
-    // eslint-disable-next-line
-  }, [page, pageSize, search]);
+    setLoading(true);
+    API.get(`/consular-files/${id}`)
+      .then((res) => setFile(res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id]);
 
-  // Handlers for actions
-  const handleEdit = (id) => {
-    const file = records.find((r) => r._id === id);
-    setEditCons(file);
-  };
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this file?")) {
-      API
-        .delete(`/consular-files/${id}`)
-        .then(() => {
-          setRecords((prev) => prev.filter((r) => r._id !== id));
-        });
+  const handlePrint = () => {
+    // Print just the details section
+    if (printRef.current) {
+      const printContents = printRef.current.innerHTML;
+      const win = window.open("", "PrintWindow", "width=900,height=700");
+      win.document.write(`
+        <html>
+          <head>
+            <title>Consular File</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 40px; }
+              h2 { margin-bottom: 16px; }
+              table { border-collapse: collapse; width: 100%; }
+              td, th { border: 1px solid #ccc; padding: 8px; }
+              .section-title { margin-top: 32px; }
+            </style>
+          </head>
+          <body>
+            ${printContents}
+          </body>
+        </html>
+      `);
+      win.document.close();
+      setTimeout(() => win.print(), 300);
     }
   };
 
-  const handleView = (id) => {
-    navigate(`/consular-file/${id}`);
-  };
+  if (loading) {
+    return (
+      <Box sx={{ pt: 10, textAlign: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
-  // Adjusted columns to match existing data fields
-  const columns = [
-    {
-      field: "fileNumber",
-      headerName: "File Number",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "openedOn",
-      headerName: "Opened On",
-      flex: 1,
-      minWidth: 120,
-      valueGetter: (params) =>
-        params.value
-          ? new Date(params.value).toLocaleDateString()
-          : "",
-    },
-    {
-      field: "observations",
-      headerName: "Observations",
-      flex: 2,
-      minWidth: 180,
-    },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      flex: 1,
-      minWidth: 180,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={
-            <Tooltip title="View">
-              <VisibilityIcon color="info" />
-            </Tooltip>
-          }
-          label="View"
-          onClick={() => handleView(params.id)}
-        />,
-        <GridActionsCellItem
-          icon={
-            <Tooltip title="Edit">
-              <EditIcon />
-            </Tooltip>
-          }
-          label="Edit"
-          onClick={() => handleEdit(params.id)}
-        />,
-        <GridActionsCellItem
-          icon={
-            <Tooltip title="Delete">
-              <DeleteIcon color="error" />
-            </Tooltip>
-          }
-          label="Delete"
-          onClick={() => handleDelete(params.id)}
-        />,
-      ],
-    },
-  ];
+  if (!file) {
+    return (
+      <Box sx={{ pt: 10, textAlign: "center" }}>
+        <Typography variant="h6" color="error">
+          Consular file not found.
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          sx={{ mt: 2 }}
+          onClick={() => navigate("/consular-files")}
+        >
+          Back to Table
+        </Button>
+      </Box>
+    );
+  }
 
   return (
-    <Paper sx={{ p: 3, maxWidth: 1200, mx: "auto", mt: 4 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Consular Files
-      </Typography>
-      <Box sx={{ mb: 2, display: "flex", alignItems: "center" }}>
-        <TextField
-          label="Search by File Number, Name, Observations"
-          size="small"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ width: 350 }}
-        />
+    <Paper sx={{ p: 4, maxWidth: 850, mx: "auto", mt: 4 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/consular-files")}
+        >
+          Back
+        </Button>
+        <Button
+          variant="contained"
+          color="info"
+          startIcon={<PrintIcon />}
+          onClick={handlePrint}
+        >
+          Print
+        </Button>
       </Box>
-      <DataGrid
-        rows={records}
-        columns={columns}
-        getRowId={(row) => row._id}
-        rowCount={rowCount}
-        page={page}
-        pageSize={pageSize}
-        pagination
-        paginationMode="server"
-        onPageChange={(newPage) => setPage(newPage)}
-        onPageSizeChange={(newSize) => setPageSize(newSize)}
-        loading={loading}
-        autoHeight
-        components={{
-          Toolbar: GridToolbar,
-        }}
-        sx={{
-          "& .MuiDataGrid-actionsCell": { justifyContent: "center" },
-        }}
-      />
-      <EditConsularFileDialog
-        open={!!editCons}
-        onClose={() => setEditCons(null)}
-        consularFile={editCons}
-        onSave={() => {
-          setEditCons(null);
-          fetchRecords();
-        }}
-      />
+
+      <div ref={printRef}>
+        <Typography variant="h4" gutterBottom>Consular File Details</Typography>
+        <Divider sx={{ mb: 2 }} />
+
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>File Number:</strong> {file.fileNumber}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Opened On:</strong> {file.openedOn ? new Date(file.openedOn).toLocaleDateString() : ""}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Name:</strong> {file.name}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Spouse:</strong> {file.spouse}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Spouse Nationality:</strong> {file.spouseNationality}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Spouse Profession:</strong> {file.spouseProfession}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Spouse Workplace:</strong> {file.spouseWorkplace}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Spouse ID Document:</strong> {file.spouseIdDocument}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>Spouse Cell Phone:</strong> {file.spouseCellPhone}</Typography>
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" className="section-title">Passports Granted</Typography>
+        <table>
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Issue Date</th>
+              <th>Expiry Date</th>
+              <th>Country</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(file.passportsGranted) && file.passportsGranted.length > 0 ? (
+              file.passportsGranted.map((p, idx) => (
+                <tr key={idx}>
+                  <td>{p.number}</td>
+                  <td>{p.issueDate ? new Date(p.issueDate).toLocaleDateString() : ""}</td>
+                  <td>{p.expiryDate ? new Date(p.expiryDate).toLocaleDateString() : ""}</td>
+                  <td>{p.country}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={4}>No passports granted.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" className="section-title">Repatriations</Typography>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Conditions</th>
+              <th>State Charges</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(file.repatriations) && file.repatriations.length > 0 ? (
+              file.repatriations.map((r, idx) => (
+                <tr key={idx}>
+                  <td>{r.date ? new Date(r.date).toLocaleDateString() : ""}</td>
+                  <td>{r.conditions}</td>
+                  <td>{r.stateCharges}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3}>No repatriations.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" className="section-title">Civil & Notary Acts</Typography>
+        <Typography>{file.civilNotarialActs}</Typography>
+
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" className="section-title">Applicant Signature</Typography>
+        <Typography>{file.applicantSignature}</Typography>
+
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" className="section-title">Observations</Typography>
+        <Typography>{file.observations}</Typography>
+
+        {file.attachment && (
+          <>
+            <Divider sx={{ my: 3 }} />
+            <Typography variant="h6" className="section-title">Attachment</Typography>
+            <a href={file.attachment} target="_blank" rel="noopener noreferrer">
+              {file.attachment}
+            </a>
+          </>
+        )}
+      </div>
     </Paper>
   );
 }
