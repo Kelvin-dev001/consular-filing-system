@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import { setToken } from "./utils/auth";
-import RegistrationWizard from "./components/registrationform/RegistrationWizard";
+import RegistrationForm from "./components/RegistrationForm/RegistrationForm";
 import ConsularFileForm from "./components/ConsularFileForm/ConsularFileForm";
 import RegistrationsTable from "./components/RegistrationForm/RegistrationsTable";
 import ConsularFileTable from "./components/ConsularFileForm/ConsularFileTable"; //
@@ -39,7 +39,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/registration-form" element={<RegistrationWizard />} />
+          <Route path="/registration-form" element={<RegistrationForm />} />
           <Route path="/consular-file-form" element={<ConsularFileForm />} />
           <Route path="/registrations" element={<RegistrationsTable />} />
           <Route path="/consular-files" element={<ConsularFileTable />} /> {/* <-- Add this route */}
