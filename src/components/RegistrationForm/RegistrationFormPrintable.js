@@ -9,19 +9,7 @@ const Dots = ({ length = 30 }) => (
 
 export default function RegistrationFormPrintable({ form }) {
   // Helper for field display (blank if missing)
-  const show = (val) => val ? val : <Dots length={20} />;
-
-  // Helper for day/month/year splitting
-  const dateParts = (dateStr) => {
-    if (!dateStr) return [<Dots length={8}/>, <Dots length={8}/>, <Dots length={8}/>];
-    const d = new Date(dateStr);
-    if (isNaN(d)) return [<Dots length={8}/>, <Dots length={8}/>, <Dots length={8}/>];
-    return [
-      String(d.getDate()).padStart(2, "0"),
-      String(d.getMonth() + 1).padStart(2, "0"),
-      d.getFullYear()
-    ];
-  };
+  const show = (val, len = 20) => val && val !== "" ? val : <Dots length={len} />;
 
   // Passport photo logic
   let passPhoto = null;
@@ -66,7 +54,7 @@ export default function RegistrationFormPrintable({ form }) {
       {/* HEADER */}
       <div style={{ textAlign: "center", marginTop: 25, marginBottom: 6 }}>
         <img
-          src="/logo-emblem.png"
+          src="/emblem-mozambique.jpeg"
           alt="Emblema"
           style={{
             width: 80,
@@ -82,7 +70,9 @@ export default function RegistrationFormPrintable({ form }) {
         textAlign: "center",
         fontSize: "1.25em",
         letterSpacing: 1,
-        lineHeight: 1.25
+        lineHeight: 1.25,
+        fontFamily: "Times New Roman, Times, serif",
+        marginBottom: 5
       }}>
         REPÚBLICA DE MOÇAMBIQUE <br />
         CONSULADO DA REPÚBLICA DE <br />
@@ -93,27 +83,28 @@ export default function RegistrationFormPrintable({ form }) {
         display: "flex",
         flexDirection: "row",
         alignItems: "flex-start",
-        justifyContent: "center",
-        marginTop: 14,
-        marginBottom: 10
+        justifyContent: "space-between",
+        marginTop: 22,
+        marginBottom: 10,
+        paddingLeft: 24,
+        paddingRight: 32
       }}>
-        <div style={{ flex: "1 1 65%", textAlign: "center" }}>
+        <div style={{ flex: 1, textAlign: "center" }}>
           <div style={{
             fontWeight: "bold",
-            fontSize: "1.15em",
+            fontSize: "1.18em",
             marginBottom: 6,
             marginTop: 2,
-            textTransform: "uppercase"
+            textTransform: "uppercase",
+            fontFamily: "Times New Roman, Times, serif"
           }}>
             INSCRIÇÃO CONSULAR
           </div>
         </div>
         <div style={{
-          flex: "0 0 auto",
-          width: 100,
-          height: 100,
-          border: "2px solid #111",
-          marginLeft: 30,
+          width: 68,
+          height: 68,
+          border: "2px solid #000",
           background: "#fff",
           display: "flex",
           alignItems: "center",
@@ -125,9 +116,13 @@ export default function RegistrationFormPrintable({ form }) {
         </div>
       </div>
       {/* Consular info */}
-      <div style={{margin: "0 0 10px 0", fontSize: "1.01em"}}>
+      <div style={{
+        margin: "0 0 10px 0",
+        fontSize: "1.01em",
+        paddingLeft: 24
+      }}>
         <div>
-          <b>INSC. CONSULAR Nº</b> <Dots length={30} /> 
+          <b>INSC. CONSULAR Nº</b> <Dots length={30} />
         </div>
         <div>
           <b>DATA DE EMISSÃO</b> <Dots length={18} /> <b>VALIDADE</b> <Dots length={18} />
@@ -141,22 +136,22 @@ export default function RegistrationFormPrintable({ form }) {
         padding: "2px 10px 2px 10px"
       }}>
         <div>
-          Nome completo <Dots length={72} />
+          Nome completo <Dots length={70} />
         </div>
         <div>
-          País e local de nascimento <Dots length={54} />
+          País e local de nascimento <Dots length={56} />
         </div>
         <div>
-          Data de Nascimento <Dots length={6}/> de <Dots length={6}/> de <Dots length={8}/> &nbsp; Estado Civil <Dots length={24}/>
+          Data de Nascimento <Dots length={6}/> de <Dots length={8}/> de <Dots length={10}/> &nbsp; Estado Civil <Dots length={20}/>
         </div>
         <div>
-          Nome do Pai <Dots length={58}/>
+          Nome do Pai <Dots length={56}/>
         </div>
         <div>
-          Nome da Mãe <Dots length={58}/>
+          Nome da Mãe <Dots length={56}/>
         </div>
         <div>
-          Habilitações Literárias <Dots length={16}/> profissão <Dots length={23}/> Local de trabalho <Dots length={24}/>
+          Habilitações Literárias <Dots length={14}/> profissão <Dots length={20}/> Local de trabalho <Dots length={22}/>
         </div>
         <div>
           Telefone <Dots length={16}/> (Estudante, local de ensino) <Dots length={32}/>
@@ -165,23 +160,24 @@ export default function RegistrationFormPrintable({ form }) {
           Portador de passaporte/C. Emergencia/BI/Cédula pessoal Nº <Dots length={30}/> Emitido em <Dots length={16}/>
         </div>
         <div>
-          Aos <Dots length={6}/> de <Dots length={6}/> válido até <Dots length={6}/> de <Dots length={6}/> de <Dots length={8}/> Última residência em Moçambique <Dots length={24}/>
+          Aos <Dots length={6}/> de <Dots length={6}/> válido até <Dots length={6}/> de <Dots length={6}/> de <Dots length={8}/> Última residência em Moçambique <Dots length={18}/>
         </div>
         <div>
-          Endereço da residência em Quénia <Dots length={28}/> Localidade <Dots length={24}/>
+          Endereço da residência em Quénia <Dots length={26}/> Localidade <Dots length={20}/>
         </div>
         <div>
-          Distrito <Dots length={18}/> Telefone Celular <Dots length={26}/>
+          Distrito <Dots length={16}/> Telefone Celular <Dots length={26}/>
         </div>
       </div>
 
       {/* Spouse */}
       <div style={{
         border: "1.5px solid #222",
-        marginBottom: 10,
+        marginBottom: 0,
         padding: "2px 10px 2px 10px",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        background: "#fff"
       }}>
         DADOS DE CÔNJUGE
       </div>
@@ -226,9 +222,9 @@ export default function RegistrationFormPrintable({ form }) {
             {form.familyMozambique && form.familyMozambique.length > 0
               ? form.familyMozambique.map((f, i) => (
                   <tr key={i}>
-                    <td style={tdStyle}>{show(f.name)}</td>
-                    <td style={tdStyle}>{show(f.relationship)}</td>
-                    <td style={tdStyle}>{show(f.residence)}</td>
+                    <td style={tdStyle}>{show(f.name, 18)}</td>
+                    <td style={tdStyle}>{show(f.relationship, 18)}</td>
+                    <td style={tdStyle}>{show(f.residence, 24)}</td>
                   </tr>
                 ))
               : [...Array(3)].map((_, i) => (
@@ -278,9 +274,9 @@ export default function RegistrationFormPrintable({ form }) {
               {form.familyUnder15 && form.familyUnder15.length > 0
                 ? form.familyUnder15.map((f, i) => (
                     <tr key={i}>
-                      <td style={tdStyle}>{show(f.name)}</td>
-                      <td style={tdStyle}>{show(f.relationship)}</td>
-                      <td style={tdStyle}>{show(f.age)}</td>
+                      <td style={tdStyle}>{show(f.name, 18)}</td>
+                      <td style={tdStyle}>{show(f.relationship, 18)}</td>
+                      <td style={tdStyle}>{show(f.age, 10)}</td>
                     </tr>
                   ))
                 : [...Array(2)].map((_, i) => (
@@ -336,10 +332,10 @@ export default function RegistrationFormPrintable({ form }) {
               {form.passports && form.passports.length > 0
                 ? form.passports.map((p, i) => (
                     <tr key={i}>
-                      <td style={tdStyle}>{show(p.number)}</td>
-                      <td style={tdStyle}>{show(p.issueDate)}</td>
-                      <td style={tdStyle}>{show(p.expiryDate)}</td>
-                      <td style={tdStyle}>{show(p.country)}</td>
+                      <td style={tdStyle}>{show(p.number, 12)}</td>
+                      <td style={tdStyle}>{show(p.issueDate, 12)}</td>
+                      <td style={tdStyle}>{show(p.expiryDate, 14)}</td>
+                      <td style={tdStyle}>{show(p.country, 14)}</td>
                     </tr>
                   ))
                 : [...Array(2)].map((_, i) => (
@@ -379,9 +375,9 @@ export default function RegistrationFormPrintable({ form }) {
               {form.repatriations && form.repatriations.length > 0
                 ? form.repatriations.map((r, i) => (
                     <tr key={i}>
-                      <td style={tdStyle}>{show(r.date)}</td>
-                      <td style={tdStyle}>{show(r.conditions)}</td>
-                      <td style={tdStyle}>{show(r.charges)}</td>
+                      <td style={tdStyle}>{show(r.date, 12)}</td>
+                      <td style={tdStyle}>{show(r.conditions, 20)}</td>
+                      <td style={tdStyle}>{show(r.charges, 18)}</td>
                     </tr>
                   ))
                 : [...Array(2)].map((_, i) => (
