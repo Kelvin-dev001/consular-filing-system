@@ -63,7 +63,9 @@ export default function ConsularFileWizard() {
   // Fetch file number options for dropdown on mount
   useEffect(() => {
     fetchAllRegistrationFileNumbers()
-      .then(setFileNumberOptions)
+      .then((data) => {
+        setFileNumberOptions(data);
+      })
       .catch(() => setFileNumberOptions([]));
     // Reset wizard state on mount/new session
     setForm(initialForm);
@@ -334,22 +336,21 @@ export default function ConsularFileWizard() {
             <Grid item xs={6}>
               <Autocomplete
                 freeSolo
-                options={fileNumberOptions.map(opt => ({
-                  label: `${opt.fileNumber} - ${opt.fullName}`,
-                  value: opt.fileNumber
-                }))}
+                options={fileNumberOptions}
                 getOptionLabel={option =>
-                  typeof option === "string" ? option : option.label
+                  option.fileNumber
+                    ? `${option.fileNumber} - ${option.fullName || ""}`
+                    : typeof option === "string" ? option : ""
                 }
                 value={
-                  fileNumberOptions.find(opt => opt.value === form.fileNumber) ||
+                  fileNumberOptions.find(opt => opt.fileNumber === form.fileNumber) ||
                   (form.fileNumber
-                    ? { label: form.fileNumber, value: form.fileNumber }
+                    ? { fileNumber: form.fileNumber, fullName: "" }
                     : null)
                 }
                 onChange={(_, newValue) => {
                   // User selected from dropdown
-                  const newFileNumber = newValue?.value || "";
+                  const newFileNumber = newValue?.fileNumber || "";
                   handleFileNumberChange({ target: { value: newFileNumber } });
                 }}
                 onInputChange={(_, newInputValue, reason) => {
