@@ -16,11 +16,11 @@ API.interceptors.request.use((req) => {
 
 // Add this helper:
 export async function fetchRegistrationByFileNumber(fileNumber) {
-  const res = await API.get(`/registration/by-file-number/${fileNumber}`);
+  const res = await API.get(`/registrations/by-file-number/${fileNumber}`);
   return res.data;
 }
 export async function fetchAllRegistrationFileNumbers() {
-  const res = await API.get(`/registration/file-numbers`);
+  const res = await API.get(`/registrations/file-numbers`);
   return res.data;
 }
 
