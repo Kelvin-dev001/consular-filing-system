@@ -18,13 +18,11 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  Autocomplete,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import API, {
   fetchRegistrationByFileNumber,
-  fetchAllRegistrationFileNumbers,
 } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -56,18 +54,11 @@ export default function ConsularFileWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [lookupStatus, setLookupStatus] = useState({ loading: false, found: false, error: "" });
-  const [fileNumberOptions, setFileNumberOptions] = useState([]);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  // Fetch file number options for dropdown on mount
+  // Reset wizard state on mount/new session
   useEffect(() => {
-    fetchAllRegistrationFileNumbers()
-      .then((data) => {
-        setFileNumberOptions(data);
-      })
-      .catch(() => setFileNumberOptions([]));
-    // Reset wizard state on mount/new session
     setForm(initialForm);
     setActiveStep(0);
     setError("");
@@ -334,68 +325,31 @@ export default function ConsularFileWizard() {
           <Grid container spacing={2}>
             <Grid item xs={12}><Typography variant="h6">{steps[0]}</Typography></Grid>
             <Grid item xs={6}>
-            <Autocomplete
-  options={fileNumberOptions}
-  getOptionLabel={option =>
-    typeof option === "string"
-      ? option
-      : option.fileNumber
-        ? option.fileNumber
-        : ""
-  }
-  value={
-    fileNumberOptions.find(opt => opt.fileNumber === form.fileNumber) ||
-    (form.fileNumber ? { fileNumber: form.fileNumber } : null)
-  }
-  onChange={(_, newValue) => {
-    // User selected from dropdown
-    const newFileNumber = (typeof newValue === "string" ? newValue : newValue?.fileNumber) || "";
-    handleFileNumberChange({ target: { value: newFileNumber } });
-  }}
-  onInputChange={(_, newInputValue, reason) => {
-    // User typed manually
-    if (reason === "input") {
-      handleFileNumberChange({ target: { value: newInputValue } });
-    }
-  }}
-  renderInput={params => (
-    <TextField
-      {...params}
-      label={t("fileNumber", "File Number")}
-      required
-      inputProps={{
-        ...params.inputProps,
-        style: {
-          fontWeight: "bold",
-          fontSize: 18,
-          letterSpacing: 2
-        }
-      }}
-      helperText={
-        lookupStatus.loading
-          ? "Looking up registration..."
-          : lookupStatus.error
-          ? lookupStatus.error
-          : lookupStatus.found
-          ? "Registration found and data loaded."
-          : ""
-      }
-      error={!!lookupStatus.error}
-    />
-  )}
-  sx={{
-    '& .MuiAutocomplete-input': {
-      fontWeight: "bold",
-      fontSize: "1.2rem",
-      letterSpacing: 2,
-    },
-    '& .MuiAutocomplete-listbox': {
-      fontWeight: "bold",
-      fontSize: "1.2rem",
-      letterSpacing: 2,
-    }
-  }}
-/>
+              <TextField
+                label={t("fileNumber", "File Number")}
+                name="fileNumber"
+                fullWidth
+                value={form.fileNumber}
+                onChange={handleFileNumberChange}
+                required
+                inputProps={{
+                  style: {
+                    fontWeight: "bold",
+                    fontSize: 18,
+                    letterSpacing: 2
+                  }
+                }}
+                helperText={
+                  lookupStatus.loading
+                    ? "Looking up registration..."
+                    : lookupStatus.error
+                    ? lookupStatus.error
+                    : lookupStatus.found
+                    ? "Registration found and data loaded."
+                    : ""
+                }
+                error={!!lookupStatus.error}
+              />
             </Grid>
             <Grid item xs={6}>
               <TextField
