@@ -336,16 +336,16 @@ export default function ConsularFileWizard() {
             <Grid item xs={6}>
             <Autocomplete
   options={fileNumberOptions}
-  getOptionLabel={(option) =>
+  getOptionLabel={option =>
     typeof option === "string"
       ? option
       : option.fileNumber
-        ? `${option.fileNumber}${option.fullName ? ' - ' + option.fullName : ''}`
+        ? option.fileNumber
         : ""
   }
   value={
     fileNumberOptions.find(opt => opt.fileNumber === form.fileNumber) ||
-    (form.fileNumber ? { fileNumber: form.fileNumber, fullName: "" } : null)
+    (form.fileNumber ? { fileNumber: form.fileNumber } : null)
   }
   onChange={(_, newValue) => {
     // User selected from dropdown
@@ -358,11 +358,19 @@ export default function ConsularFileWizard() {
       handleFileNumberChange({ target: { value: newInputValue } });
     }
   }}
-  renderInput={(params) => (
+  renderInput={params => (
     <TextField
       {...params}
       label={t("fileNumber", "File Number")}
       required
+      inputProps={{
+        ...params.inputProps,
+        style: {
+          fontWeight: "bold",
+          fontSize: 18,
+          letterSpacing: 2
+        }
+      }}
       helperText={
         lookupStatus.loading
           ? "Looking up registration..."
@@ -375,6 +383,18 @@ export default function ConsularFileWizard() {
       error={!!lookupStatus.error}
     />
   )}
+  sx={{
+    '& .MuiAutocomplete-input': {
+      fontWeight: "bold",
+      fontSize: "1.2rem",
+      letterSpacing: 2,
+    },
+    '& .MuiAutocomplete-listbox': {
+      fontWeight: "bold",
+      fontSize: "1.2rem",
+      letterSpacing: 2,
+    }
+  }}
 />
             </Grid>
             <Grid item xs={6}>
