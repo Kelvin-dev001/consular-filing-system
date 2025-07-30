@@ -334,49 +334,48 @@ export default function ConsularFileWizard() {
           <Grid container spacing={2}>
             <Grid item xs={12}><Typography variant="h6">{steps[0]}</Typography></Grid>
             <Grid item xs={6}>
-              <Autocomplete
-                freeSolo
-                options={fileNumberOptions}
-                getOptionLabel={option =>
-                  option.fileNumber
-                    ? `${option.fileNumber} - ${option.fullName || ""}`
-                    : typeof option === "string" ? option : ""
-                }
-                value={
-                  fileNumberOptions.find(opt => opt.fileNumber === form.fileNumber) ||
-                  (form.fileNumber
-                    ? { fileNumber: form.fileNumber, fullName: "" }
-                    : null)
-                }
-                onChange={(_, newValue) => {
-                  // User selected from dropdown
-                  const newFileNumber = newValue?.fileNumber || "";
-                  handleFileNumberChange({ target: { value: newFileNumber } });
-                }}
-                onInputChange={(_, newInputValue, reason) => {
-                  // User typed manually
-                  if (reason === "input") {
-                    handleFileNumberChange({ target: { value: newInputValue } });
-                  }
-                }}
-                renderInput={params => (
-                  <TextField
-                    {...params}
-                    label={t("fileNumber", "File Number")}
-                    required
-                    helperText={
-                      lookupStatus.loading
-                        ? "Looking up registration..."
-                        : lookupStatus.error
-                        ? lookupStatus.error
-                        : lookupStatus.found
-                        ? "Registration found and data loaded."
-                        : ""
-                    }
-                    error={!!lookupStatus.error}
-                  />
-                )}
-              />
+            <Autocomplete
+  options={fileNumberOptions}
+  getOptionLabel={(option) =>
+    typeof option === "string"
+      ? option
+      : option.fileNumber
+        ? `${option.fileNumber}${option.fullName ? ' - ' + option.fullName : ''}`
+        : ""
+  }
+  value={
+    fileNumberOptions.find(opt => opt.fileNumber === form.fileNumber) ||
+    (form.fileNumber ? { fileNumber: form.fileNumber, fullName: "" } : null)
+  }
+  onChange={(_, newValue) => {
+    // User selected from dropdown
+    const newFileNumber = (typeof newValue === "string" ? newValue : newValue?.fileNumber) || "";
+    handleFileNumberChange({ target: { value: newFileNumber } });
+  }}
+  onInputChange={(_, newInputValue, reason) => {
+    // User typed manually
+    if (reason === "input") {
+      handleFileNumberChange({ target: { value: newInputValue } });
+    }
+  }}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label={t("fileNumber", "File Number")}
+      required
+      helperText={
+        lookupStatus.loading
+          ? "Looking up registration..."
+          : lookupStatus.error
+          ? lookupStatus.error
+          : lookupStatus.found
+          ? "Registration found and data loaded."
+          : ""
+      }
+      error={!!lookupStatus.error}
+    />
+  )}
+/>
             </Grid>
             <Grid item xs={6}>
               <TextField
