@@ -1,9 +1,10 @@
 .printableForm {
   background: #fff;
   padding: 32px;
-  font-family: Arial, serif;
+  font-family: 'Times New Roman', Times, serif;
   color: #111;
   max-width: 900px;
+  min-height: 1350px;
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -12,7 +13,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 14px;
 }
 
 .logoImg {
@@ -23,17 +24,15 @@
   margin: 0 auto;
 }
 
-/* New: Layout for header row (titles and photo in one row) */
 .headerRowFlex {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
   gap: 48px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
-/* New: Block for all header lines/titles */
 .titlesBlock {
   display: flex;
   flex-direction: column;
@@ -41,6 +40,7 @@
   justify-content: center;
   flex: 1 1 auto;
   min-width: 340px;
+  margin-bottom: 18px;
 }
 
 .headerLine {
@@ -55,10 +55,10 @@
 
 .sectionTitlePrint {
   font-weight: bold;
-  margin: 16px 0 6px 0;
+  margin: 24px 0 14px 0;
   text-transform: uppercase;
-  font-size: 1.12em;
-  letter-spacing: 0.5px;
+  font-size: 1.11em;
+  letter-spacing: 0.7px;
   text-align: left;
 }
 
@@ -70,17 +70,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden; /* Ensures nothing overflows */
+  overflow: hidden;
   position: relative;
 }
-
 
 .photoPreview {
   max-width: 96px;
   max-height: 96px;
   width: auto;
   height: auto;
-  object-fit: cover;   /* Ensures the image always fills the box neatly */
+  object-fit: cover;
   border-radius: 4px;
   display: block;
   background: #fff;
@@ -88,8 +87,9 @@
 
 .metaSection {
   text-align: left;
-  margin-top: 12px;
-  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 18px;
+  font-size: 1.04em;
 }
 
 .sectionTitle {
@@ -105,20 +105,21 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 18px;
+  background: #fff;
 }
 
 .table th,
 .table td {
-  border: 1.5px solid #222;
-  padding: 8px;
-  min-height: 32px;
-  font-size: 1em;
+  border: 2px solid #222;
+  padding: 14px 8px;
+  min-height: 38px;
+  font-size: 1.01em;
   text-align: left;
   background: #fff;
 }
 
 .table th {
-  background: #f3a2c2;
+  background: #fff;
   font-weight: bold;
   text-align: center;
 }
@@ -133,28 +134,10 @@
 .footerRow {
   display: flex;
   justify-content: space-between;
-  margin-top: 32px;
+  margin-top: 36px;
   font-size: 1em;
 }
 
-.imagesRow {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.uploadedImg {
-  max-width: 160px;
-  max-height: 140px;
-  border: 1.5px solid #b10056;
-  border-radius: 4px;
-  margin-right: 8px;
-  background: #fff;
-}
-
-/* Hide instructions and buttons on print */
-.no-print { display: block; }
 @media print {
   .printableForm {
     background: #fff !important;
@@ -163,41 +146,35 @@
     margin: 0 !important;
     color: #111 !important;
     max-width: 100% !important;
+    min-height: 1350px !important;
   }
-
   .header, .sectionTitle, .footerRow {
     color: #111 !important;
     background: none !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
   .table th, .table td {
     background: #fff !important;
     color: #111 !important;
-    border: 1px solid #222 !important;
-    border-width: 1px !important;
-    padding: 6px !important;
-    font-size: 0.95em !important;
+    border: 2px solid #222 !important;
+    padding: 14px 8px !important;
+    font-size: 1em !important;
   }
-
   .table th {
     font-weight: bold !important;
     text-align: center !important;
   }
-
   .photoBox {
-    border: 1px solid #222 !important;
+    border: 2px solid #222 !important;
     background: #fff !important;
     width: 95px !important;
     height: 95px !important;
   }
-
   .photoPreview {
     max-width: 88px !important;
     max-height: 88px !important;
   }
-
   img {
     max-width: 100px !important;
     max-height: 100px !important;
@@ -205,7 +182,6 @@
     outline: none !important;
     background: #fff !important;
   }
-
   button, .no-print {
     display: none !important;
   }
