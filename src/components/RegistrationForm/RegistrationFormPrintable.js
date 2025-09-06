@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./registrationformprintable.module.css";
+import styles from "./RegistrationFormPrintable.module.css";
 
 // Helper for dotted lines
 const Dots = ({ length = 30 }) => (
