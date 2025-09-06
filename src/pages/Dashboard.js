@@ -28,7 +28,6 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import EditRegistrationDialog from "../components/RegistrationForm/EditRegistrationDialog";
 import { useTranslation } from "react-i18next";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function Dashboard() {
   const user = getUser();
@@ -121,13 +120,6 @@ export default function Dashboard() {
       color += ("00" + value.toString(16)).substr(-2);
     }
     return color;
-  };
-
-  // Registration delete handler
-  const handleDeleteReg = async (id) => {
-    if (!window.confirm(t("deleteRegistrationConfirm") || t("deleteConfirm", { type: t("registration") }))) return;
-    await API.delete(`/registration/${id}`);
-    fetchRegistrations();
   };
 
   return (
@@ -419,16 +411,7 @@ export default function Dashboard() {
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title={t("delete")}>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteReg(reg._id)}
-                        aria-label={t("deleteRegistration")}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
+                    {/* DELETE ICON REMOVED FROM DASHBOARD */}
                   </Stack>
                 </Paper>
               ))}
