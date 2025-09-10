@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Stepper,
   Step,
@@ -29,11 +29,9 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import SendIcon from "@mui/icons-material/Send";
 import { useTranslation } from "react-i18next";
 import API from "../../utils/api";
 import "./RegistrationWizard.css";
-import ConfirmationPage from "./ConfirmationPage";
 
 const initialForm = {
   fileNumber: "",
@@ -91,20 +89,19 @@ const steps = [
   "Repatriations",
   "Civil/Notary Acts",
   "Observations & Attachments",
-  "Confirmation"
+  "Summary"
 ];
 
 export default function RegistrationWizard() {
+  const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState(() => location.state?.form || initialForm);
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-  // Confirmation dialog state
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -114,9 +111,7 @@ export default function RegistrationWizard() {
     setForm(initialForm);
     setActiveStep(0);
     setError("");
-    setMessage("");
     setLoading(false);
-    setSubmitted(false);
     setSnackbarOpen(false);
   }, []);
 
@@ -222,11 +217,10 @@ export default function RegistrationWizard() {
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
-  // -------- Submission: confirmation dialog and actual submit --------
+  // -------- Submission --------
   const doSubmitRegistration = async () => {
     setSubmitting(true);
     setError("");
-    setMessage("");
     try {
       let photoUrl = "";
       if (form.passportPhoto) {
@@ -242,12 +236,13 @@ export default function RegistrationWizard() {
         passportPhoto: photoUrl,
       };
       await API.post("/registrations", dataToSend);
-      setMessage(
+      setSnackbarMsg(
         t("registrationSuccess") ||
-        "Registration submitted successfully! You may now print or save your registration."
+          "Registration submitted successfully! You may now view or print your registration."
       );
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
-      setSubmitted(true);
+      setTimeout(() => navigate("/dashboard"), 1800);
       setShowConfirmDialog(false);
     } catch (err) {
       let userMessage = "";
@@ -259,9 +254,11 @@ export default function RegistrationWizard() {
       } else if (err.message) {
         userMessage = err.message;
       } else {
-        userMessage = t("submissionFailed") || "Submission failed. Please try again.";
+        userMessage =
+          t("submissionFailed") || "Submission failed. Please try again.";
       }
-      setError(userMessage);
+      setSnackbarMsg(userMessage);
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
       setShowConfirmDialog(false);
     } finally {
@@ -269,8 +266,162 @@ export default function RegistrationWizard() {
     }
   };
 
+  // -------- Summary Step Content --------
+  function renderSummary() {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Registration Summary
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Typography><b>File Number:</b> {form.fileNumber}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Issued On:</b> {form.issuedOn}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Full Name:</b> {form.fullName}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Country/Place of Birth:</b> {form.countryPlaceOfBirth}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Date of Birth:</b> {form.birthDate}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Marital Status:</b> {form.maritalStatus}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Profession:</b> {form.profession}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Education:</b> {form.education}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Workplace/School:</b> {form.workplaceOrSchool}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Phone:</b> {form.phone}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Cell Phone:</b> {form.cellPhone}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Current Residence:</b> {form.currentResidence}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Residence Kenya:</b> {form.residenceKenya}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Residence Mozambique:</b> {form.residenceMozambique}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>District:</b> {form.district}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Father Name:</b> {form.fatherName}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Mother Name:</b> {form.motherName}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Passport/ID Number:</b> {form.passportOrIdNumber}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Passport Issued At:</b> {form.passportIssuedAt}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Passport Valid Until:</b> {form.passportValidUntil}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Documents Presented:</b> {form.documentsPresented}</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography><b>Observations:</b> {form.observations}</Typography>
+          </Grid>
+        </Grid>
+        <Divider sx={{ my: 2 }} />
+        <Typography variant="subtitle1" gutterBottom>
+          Spouse
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <Typography><b>Name:</b> {form.spouse.fullName}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Nationality:</b> {form.spouse.nationality}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>ID Document:</b> {form.spouse.idDocument}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Profession:</b> {form.spouse.profession}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Workplace:</b> {form.spouse.workplace}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography><b>Cell Phone:</b> {form.spouse.cellPhone}</Typography>
+          </Grid>
+        </Grid>
+        <Divider sx={{ my: 2 }} />
+        <Typography variant="subtitle1" gutterBottom>
+          Family in Mozambique
+        </Typography>
+        <ul>
+          {form.familyMozambique.map((f, i) => (
+            <li key={i}>
+              {f.name} - {f.relationship}, {f.residence}
+            </li>
+          ))}
+        </ul>
+        <Typography variant="subtitle1" gutterBottom>
+          Family Under 15 (Kenya)
+        </Typography>
+        <ul>
+          {form.familyUnder15.map((f, i) => (
+            <li key={i}>
+              {f.name} - {f.relationship}, Age: {f.age} {f.ageType}
+            </li>
+          ))}
+        </ul>
+        <Divider sx={{ my: 2 }} />
+        <Typography variant="subtitle1" gutterBottom>
+          Passports
+        </Typography>
+        <ul>
+          {form.passports.map((p, i) => (
+            <li key={i}>
+              {p.number} - {p.country}, Issue: {p.issueDate}, Expiry: {p.expiryDate}
+            </li>
+          ))}
+        </ul>
+        <Typography variant="subtitle1" gutterBottom>
+          Repatriations
+        </Typography>
+        <ul>
+          {form.repatriations.map((r, i) => (
+            <li key={i}>
+              {r.date} - {r.conditions}, Charges: {r.charges}
+            </li>
+          ))}
+        </ul>
+        <Divider sx={{ my: 2 }} />
+        <Typography variant="subtitle1" gutterBottom>
+          Civil/Notary Acts
+        </Typography>
+        <Typography>{form.civilActs}</Typography>
+      </Box>
+    );
+  }
+
   // -------- Step Content --------
   function getStepContent(step) {
+    if (step === steps.length - 1) {
+      return renderSummary();
+    }
     switch (step) {
       case 0:
         return (
@@ -325,7 +476,6 @@ export default function RegistrationWizard() {
                 Enter your personal details as required.
               </Typography>
             </Grid>
-            {/* All personal info fields as before */}
             <Grid item xs={6}>
               <TextField
                 label={t("fullName") || "Full Name"}
@@ -427,7 +577,6 @@ export default function RegistrationWizard() {
                 onChange={handleChange}
               />
             </Grid>
-            {/* Passport/ID Type Selector */}
             <Grid item xs={6}>
               <TextField
                 select
@@ -481,7 +630,6 @@ export default function RegistrationWizard() {
                 onChange={handleChange}
               />
             </Grid>
-            {/* New field: Location in Kenya */}
             <Grid item xs={6}>
               <TextField
                 label={t("location") || "Location in Kenya"}
@@ -1006,23 +1154,12 @@ export default function RegistrationWizard() {
             </Grid>
           </Grid>
         );
-      case 10:
-        // Confirmation step — show print preview only
-        return (
-          <ConfirmationPage form={form} onBack={handleBack} />
-        );
       default:
         return null;
     }
   }
 
-  // -------- Snackbar Close Handler --------
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    setSnackbarOpen(false);
-  };
-
-  // -------- Confirmation Dialog Component --------
+  // -------- Confirmation Dialog --------
   const ConfirmationDialog = (
     <Dialog open={showConfirmDialog} onClose={() => setShowConfirmDialog(false)}>
       <DialogTitle>Confirm Submission</DialogTitle>
@@ -1032,7 +1169,7 @@ export default function RegistrationWizard() {
         </Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setShowConfirmDialog(false)} disabled={submitting}>Cancel</Button>
+        <Button onClick={() => setShowConfirmDialog(false)} disabled={submitting}>Back</Button>
         <Button
           onClick={doSubmitRegistration}
           color="primary"
@@ -1045,11 +1182,10 @@ export default function RegistrationWizard() {
     </Dialog>
   );
 
-  // -------- Render --------
-  if (submitted) {
-    return <ConfirmationPage form={form} />;
-  }
+  // -------- Snackbar --------
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
+  // -------- Render --------
   return (
     <Box className="registration-wizard-container">
       <Paper elevation={4} sx={{ p: { xs: 2, sm: 4 }, maxWidth: 850, margin: "auto" }}>
@@ -1079,11 +1215,6 @@ export default function RegistrationWizard() {
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
-            </Alert>
-          )}
-          {message && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {message}
             </Alert>
           )}
           {/* Navigation/Submit buttons */}
@@ -1133,9 +1264,16 @@ export default function RegistrationWizard() {
               )}
             </Box>
           )}
-          {/* Final step: show Submit button */}
+          {/* Final step: show Back and Submit buttons */}
           {activeStep === steps.length - 1 && (
-            <Box sx={{ mt: 4, textAlign: "center" }}>
+            <Box sx={{ mt: 4, display: "flex", justifyContent: "center", gap: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={handleBack}
+                disabled={submitting}
+              >
+                Back to Edit
+              </Button>
               <Button
                 variant="contained"
                 color="primary"
@@ -1150,19 +1288,13 @@ export default function RegistrationWizard() {
         </form>
         <Snackbar
           open={snackbarOpen}
-          autoHideDuration={6000}
+          autoHideDuration={3500}
           onClose={handleSnackbarClose}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {error ? (
-            <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
-              {error}
-            </Alert>
-          ) : message ? (
-            <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: "100%" }}>
-              {message}
-            </Alert>
-          ) : null}
+          <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+            {snackbarMsg}
+          </Alert>
         </Snackbar>
         {ConfirmationDialog}
       </Paper>
