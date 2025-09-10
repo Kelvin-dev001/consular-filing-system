@@ -20,6 +20,10 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -92,7 +96,6 @@ const steps = [
 
 export default function RegistrationWizard() {
   const location = useLocation();
-  // If location.state?.form exists, use it; otherwise use initialForm
   const [form, setForm] = useState(() => location.state?.form || initialForm);
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState("");
@@ -100,6 +103,11 @@ export default function RegistrationWizard() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  // Confirmation dialog state
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -214,12 +222,11 @@ export default function RegistrationWizard() {
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
-  // -------- Submission --------
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // -------- Submission: confirmation dialog and actual submit --------
+  const doSubmitRegistration = async () => {
+    setSubmitting(true);
     setError("");
     setMessage("");
-    setLoading(true);
     try {
       let photoUrl = "";
       if (form.passportPhoto) {
@@ -241,6 +248,7 @@ export default function RegistrationWizard() {
       );
       setSnackbarOpen(true);
       setSubmitted(true);
+      setShowConfirmDialog(false);
     } catch (err) {
       let userMessage = "";
       if (err.response?.data?.message) {
@@ -255,8 +263,9 @@ export default function RegistrationWizard() {
       }
       setError(userMessage);
       setSnackbarOpen(true);
+      setShowConfirmDialog(false);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -998,7 +1007,10 @@ export default function RegistrationWizard() {
           </Grid>
         );
       case 10:
-        return <ConfirmationPage form={form} onBack={handleBack} />;
+        // Confirmation step — show print preview only
+        return (
+          <ConfirmationPage form={form} onBack={handleBack} />
+        );
       default:
         return null;
     }
@@ -1009,6 +1021,29 @@ export default function RegistrationWizard() {
     if (reason === "clickaway") return;
     setSnackbarOpen(false);
   };
+
+  // -------- Confirmation Dialog Component --------
+  const ConfirmationDialog = (
+    <Dialog open={showConfirmDialog} onClose={() => setShowConfirmDialog(false)}>
+      <DialogTitle>Confirm Submission</DialogTitle>
+      <DialogContent>
+        <Typography>
+          Are you sure you want to submit this registration? Please confirm all details are correct.
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setShowConfirmDialog(false)} disabled={submitting}>Cancel</Button>
+        <Button
+          onClick={doSubmitRegistration}
+          color="primary"
+          variant="contained"
+          disabled={submitting}
+        >
+          {submitting ? <CircularProgress size={22} /> : "Confirm & Submit"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 
   // -------- Render --------
   if (submitted) {
@@ -1037,7 +1072,7 @@ export default function RegistrationWizard() {
           ))}
         </Stepper>
         <Divider sx={{ my: 2 }} />
-        <form onSubmit={handleSubmit} autoComplete="off">
+        <form onSubmit={e => e.preventDefault()} autoComplete="off">
           <Box sx={{ pt: 2 }}>
             {getStepContent(activeStep)}
           </Box>
@@ -1051,7 +1086,7 @@ export default function RegistrationWizard() {
               {message}
             </Alert>
           )}
-          {/* Show navigation and review/submit buttons only if not on confirmation page */}
+          {/* Navigation/Submit buttons */}
           {activeStep < steps.length - 1 && (
             <Box
               sx={{
@@ -1098,6 +1133,20 @@ export default function RegistrationWizard() {
               )}
             </Box>
           )}
+          {/* Final step: show Submit button */}
+          {activeStep === steps.length - 1 && (
+            <Box sx={{ mt: 4, textAlign: "center" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => setShowConfirmDialog(true)}
+                disabled={submitting}
+              >
+                {submitting ? <CircularProgress size={24} /> : "Submit Registration"}
+              </Button>
+            </Box>
+          )}
         </form>
         <Snackbar
           open={snackbarOpen}
@@ -1115,6 +1164,7 @@ export default function RegistrationWizard() {
             </Alert>
           ) : null}
         </Snackbar>
+        {ConfirmationDialog}
       </Paper>
     </Box>
   );
