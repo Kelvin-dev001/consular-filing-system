@@ -21,9 +21,7 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import API, {
-  fetchRegistrationByFileNumber,
-} from "../../utils/api";
+import API from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./ConsularFileWizard.css";
@@ -53,7 +51,6 @@ export default function ConsularFileWizard() {
   const [snack, setSnack] = useState({ open: false, message: "", severity: "success" });
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [lookupStatus, setLookupStatus] = useState({ loading: false, found: false, error: "" });
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -78,6 +75,14 @@ export default function ConsularFileWizard() {
   // FIELD HANDLERS
   const handleChange = (e) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleFileNumberChange = (e) => {
+    const fileNumber = e.target.value;
+    setForm(f => ({
+      ...f,
+      fileNumber
+    }));
+  };
 
   const handlePassportsChange = (idx, e) => {
     setForm(f => ({
@@ -124,75 +129,6 @@ export default function ConsularFileWizard() {
     }));
 
   const handleFileChange = (e) => setForm(f => ({ ...f, attachment: e.target.files[0] }));
-
-  // ---- Registration lookup and auto-populate ----
-  // Called when user types/changes fileNumber
-  const handleFileNumberChange = async (e) => {
-    const fileNumber = e.target.value;
-    setForm(f => ({
-      ...f,
-      fileNumber,
-      // Optionally clear auto-populated fields if fileNumber is changed
-      ...(fileNumber.length < 3
-        ? {
-            name: "",
-            spouse: "",
-            spouseNationality: "",
-            spouseProfession: "",
-            spouseWorkplace: "",
-            spouseIdDocument: "",
-            spouseCellPhone: "",
-            passportsGranted: [{ number: "", issueDate: "", expiryDate: "", country: "" }]
-          }
-        : {})
-    }));
-
-    if (fileNumber && fileNumber.length > 2) {
-      setLookupStatus({ loading: true, found: false, error: "" });
-      try {
-        const reg = await fetchRegistrationByFileNumber(fileNumber);
-
-        // Auto-populate name, spouse, and passport(s)
-        setForm(f => ({
-          ...f,
-          fileNumber,
-          name: reg.fullName || "",
-          spouse: reg.spouse?.fullName || "",
-          spouseNationality: reg.spouse?.nationality || "",
-          spouseProfession: reg.spouse?.profession || "",
-          spouseWorkplace: reg.spouse?.workplace || "",
-          spouseIdDocument: reg.spouse?.idDocument || "",
-          spouseCellPhone: reg.spouse?.cellPhone || "",
-          passportsGranted:
-            Array.isArray(reg.passports) && reg.passports.length > 0
-              ? reg.passports.map(p => ({
-                  number: p.number || "",
-                  issueDate: p.issueDate ? p.issueDate.slice(0, 10) : "",
-                  expiryDate: p.expiryDate ? p.expiryDate.slice(0, 10) : "",
-                  country: p.country || ""
-                }))
-              : [{ number: "", issueDate: "", expiryDate: "", country: "" }]
-        }));
-        setLookupStatus({ loading: false, found: true, error: "" });
-      } catch (err) {
-        setLookupStatus({ loading: false, found: false, error: "Registration not found." });
-        // Optionally clear fields if not found
-        setForm(f => ({
-          ...f,
-          name: "",
-          spouse: "",
-          spouseNationality: "",
-          spouseProfession: "",
-          spouseWorkplace: "",
-          spouseIdDocument: "",
-          spouseCellPhone: "",
-          passportsGranted: [{ number: "", issueDate: "", expiryDate: "", country: "" }]
-        }));
-      }
-    } else {
-      setLookupStatus({ loading: false, found: false, error: "" });
-    }
-  };
 
   // STEP VALIDATION
   function validateStep(stepData, stepIdx) {
@@ -339,16 +275,6 @@ export default function ConsularFileWizard() {
                     letterSpacing: 2
                   }
                 }}
-                helperText={
-                  lookupStatus.loading
-                    ? "Looking up registration..."
-                    : lookupStatus.error
-                    ? lookupStatus.error
-                    : lookupStatus.found
-                    ? "Registration found and data loaded."
-                    : ""
-                }
-                error={!!lookupStatus.error}
               />
             </Grid>
             <Grid item xs={6}>
