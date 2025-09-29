@@ -24,22 +24,9 @@
   margin: 0 auto;
 }
 
-.headerRowFlex {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 48px;
-  margin-bottom: 18px;
-}
-
 .headerTextBlock {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  min-width: 340px;
-  margin-bottom: 0;
+  text-align: center;
+  margin-bottom: 8px;
 }
 
 .headerLine {
@@ -57,9 +44,28 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   text-align: center;
-  margin-top: 8px;
-  margin-bottom: 0;
+  margin-bottom: 12px;
+  margin-top: 2px;
   font-family: 'Times New Roman', Times, serif;
+}
+
+.headerRowFlex {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 48px;
+  margin-bottom: 18px;
+}
+
+.titlesBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-width: 340px;
+  margin-bottom: 18px;
 }
 
 .photoBox {
@@ -90,9 +96,6 @@
   margin-top: 10px;
   margin-bottom: 18px;
   font-size: 1.04em;
-}
-.metaSection > div {
-  margin-bottom: 3px;
 }
 
 .sectionTitlePrint {
