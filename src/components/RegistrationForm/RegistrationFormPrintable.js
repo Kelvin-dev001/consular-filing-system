@@ -12,6 +12,7 @@ export default function RegistrationFormPrintable({ form }) {
   const show = (val, len = 20) =>
     val && val !== "" ? <span>{val}</span> : <Dots length={len} />;
 
+  // Always show the photo box (even if no photo)
   const passPhoto = form?.passportPhoto ? (
     <img
       src={
@@ -39,24 +40,31 @@ export default function RegistrationFormPrintable({ form }) {
           className={styles.logoImg}
         />
       </div>
-      <div className={styles.titlesBlock}>
+      <div className={styles.headerTextBlock}>
         <div className={styles.headerLine}>
-          REPÚBLICA DE MOÇAMBIQUE <br />
-          CONSULADO DA REPÚBLICA DE <br />
+          REPÚBLICA DE MOÇAMBIQUE
+        </div>
+        <div className={styles.headerLine}>
+          CONSULADO DA REPÚBLICA DE
+        </div>
+        <div className={styles.headerLine}>
           MOÇAMBIQUE EM MOMBASA
         </div>
       </div>
+
       {/* Row: Title and photo box */}
       <div className={styles.headerRowFlex}>
         <div className={styles.titlesBlock}>
-          <div className={styles.headerLine} style={{ fontSize: "1.22em", marginBottom: 12, marginTop: 2 }}>
+          <div className={styles.formTitle}>
             INSCRIÇÃO CONSULAR
           </div>
         </div>
+        {/* Always render photo box, even if empty */}
         <div className={styles.photoBox}>
           {passPhoto}
         </div>
       </div>
+
       {/* Consular info */}
       <div className={styles.metaSection}>
         <div>
