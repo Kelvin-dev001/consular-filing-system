@@ -40,26 +40,21 @@ export default function RegistrationFormPrintable({ form }) {
           className={styles.logoImg}
         />
       </div>
-      <div className={styles.headerTextBlock}>
-        <div className={styles.headerLine}>
-          REPÚBLICA DE MOÇAMBIQUE
-        </div>
-        <div className={styles.headerLine}>
-          CONSULADO DA REPÚBLICA DE
-        </div>
-        <div className={styles.headerLine}>
-          MOÇAMBIQUE EM MOMBASA
-        </div>
-      </div>
-
-      {/* Row: Title and photo box */}
       <div className={styles.headerRowFlex}>
-        <div className={styles.titlesBlock}>
+        <div className={styles.headerTextBlock}>
+          <div className={styles.headerLine}>
+            REPÚBLICA DE MOÇAMBIQUE
+          </div>
+          <div className={styles.headerLine}>
+            CONSULADO DA REPÚBLICA DE
+          </div>
+          <div className={styles.headerLine}>
+            MOÇAMBIQUE EM MOMBASA
+          </div>
           <div className={styles.formTitle}>
             INSCRIÇÃO CONSULAR
           </div>
         </div>
-        {/* Always render photo box, even if empty */}
         <div className={styles.photoBox}>
           {passPhoto}
         </div>
@@ -71,7 +66,10 @@ export default function RegistrationFormPrintable({ form }) {
           <b>INSC. CONSULAR Nº</b> {show(form.fileNumber, 30)}
         </div>
         <div>
-          <b>DATA DE EMISSÃO</b> {show(form.issuedOn, 18)} <b>VALIDADE</b> {show(form.validity, 18)}
+          <b>DATA DE EMISSÃO</b> {show(form.issuedOn, 18)}
+        </div>
+        <div>
+          <b>VALIDADE</b> {show(form.validity, 18)}
         </div>
       </div>
 
